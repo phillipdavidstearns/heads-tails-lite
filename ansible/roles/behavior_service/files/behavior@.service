@@ -1,0 +1,13 @@
+[Unit]
+Description=run behavior test for heads-tails
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/heads-tails/Python/behaviors.py -b %I
+ExecStop=/usr/bin/python3 /home/heads-tails/Python/clearRegisters.py
+Restart=on-success
+RestartPreventExitStatus=SIGTERM SIGKILL
+
+[Install]
+WantedBy=multi-user.target

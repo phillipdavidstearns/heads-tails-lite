@@ -1,0 +1,6 @@
+---
+- name: Upload heads-tails-test systemd unit template
+  copy:
+    src: heads-tails-test.service
+    dest: /etc/systemd/system/
+    mode: 0755

@@ -1,0 +1,6 @@
+---
+- name: Generate wg0.conf files from client template
+  template:
+    src: ./templates/wg-client.conf.j2
+    dest: /etc/wireguard/{{ wg_interface_name }}.conf
+    

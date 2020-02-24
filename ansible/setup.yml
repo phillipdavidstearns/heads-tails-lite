@@ -1,0 +1,16 @@
+---
+- hosts: bootstrap
+  become: yes
+  gather_facts: no
+  roles:
+  - { role: bootstrap }
+
+- hosts: dummies
+  become: yes
+  gather_facts: no
+  roles:
+  - { role: git }
+  - { role: requirements }
+  - { role: heads_tails_test_service }
+  - { role: heads_tails_service }
+  - { role: behavior_service }

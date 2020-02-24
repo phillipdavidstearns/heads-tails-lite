@@ -1,0 +1,5 @@
+---
+- name: "start behavior@{{ behavior }}.service"
+  systemd:
+    state: started
+    name: "behavior@{{ behavior }}.service"

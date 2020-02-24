@@ -1,0 +1,5 @@
+---
+- name: stop heads-tails.service
+  systemd:
+    state: stopped
+    name: heads-tails.service

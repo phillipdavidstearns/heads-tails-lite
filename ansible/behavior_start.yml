@@ -1,0 +1,10 @@
+---
+- hosts: heads-tails
+  become: yes
+  gather_facts: no
+  roles:
+    - { role: behavior_start }
+  vars:
+    behavior: "{{ behavior }}"
+
+# set with --extra-vars "behavior=5"

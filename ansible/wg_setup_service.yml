@@ -1,0 +1,7 @@
+---
+- hosts: heads-tails
+  become: yes
+  vars:
+    config_path: "/etc/wireguard/{{ wg_interface_name }}.conf"
+  roles:
+    - { role: wg_setup_service }

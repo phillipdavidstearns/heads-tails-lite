@@ -1,0 +1,8 @@
+---
+- name: enable heads-tails-test.service
+  systemd:
+    daemon-reload: yes
+    daemon-reexec: yes
+    state: restarted
+    name: heads-tails-test.service
+    enabled: yes

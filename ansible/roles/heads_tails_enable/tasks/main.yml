@@ -1,0 +1,8 @@
+---
+- name: enable heads-tails.service
+  systemd:
+    daemon-reload: yes
+    daemon-reexec: yes
+    state: restarted
+    name: heads-tails.service
+    enabled: yes
