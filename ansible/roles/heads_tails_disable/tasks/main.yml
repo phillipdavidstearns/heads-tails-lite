@@ -1,8 +1,0 @@
----
-- name: disable heads-tails.service
-  systemd:
-    daemon-reload: yes
-    daemon-reexec: yes
-    state: stopped
-    name: heads-tails.service
-    enabled: no

@@ -1,5 +1,0 @@
----
-- name: git pull
-  shell: 'git pull'
-  args:
-    chdir: '/home/heads-tails/heads-tails/'

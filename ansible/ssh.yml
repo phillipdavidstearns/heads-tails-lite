@@ -1,5 +1,0 @@
----
-- hosts: heads-tails
-  become: yes
-  roles:
-    - { role: ssh_setup }

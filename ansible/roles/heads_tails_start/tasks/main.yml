@@ -1,5 +1,0 @@
----
-- name: restart heads-tails.service
-  systemd:
-    state: started
-    name: heads-tails.service

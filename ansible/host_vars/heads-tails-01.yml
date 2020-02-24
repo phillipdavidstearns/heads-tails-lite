@@ -1,8 +1,0 @@
----
-client_name: "heads-tails-01"
-client_ip: "10.42.0.101"
-client_privkey: "wDZpqtO/BKvT3iZv9nAma9Ft+LwHkwvOlrqA/vJ6nX8="
-client_pubkey: "THXgoGPyOHKPn86eF+cu+QVnnIK2zsY+2z6qKpAtSCM="
-server_name: "mhl-00"
-server_pubkey: "hIWJ74vYfcqSgsASqIooNRdohQBpKG9SXHkl0tmM1R0="
-endpoint_ip: "23.95.213.211"

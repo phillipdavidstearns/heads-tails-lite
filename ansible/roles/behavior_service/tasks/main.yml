@@ -1,6 +1,0 @@
----
-- name: Upload heads-tails systemd unit template
-  copy:
-    src: behavior@.service
-    dest: /etc/systemd/system/
-    mode: 0755
