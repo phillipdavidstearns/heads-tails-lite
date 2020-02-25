@@ -8,15 +8,18 @@ import time
 STR = 17
 DATA = 27
 CLK = 22
+EN = 23
 CHANNELS = 32; # number of output channels
-FPS = 30; # main refresh rate = frames per second
+FPS = 30.0; # main refresh rate = frames per second
 counter = 0
 value = 0b11111111111111111111111111111111 # testing purposes
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(STR, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-GPIO.setup(DATA, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
+def initGPIO(GPIO):
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(STR, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
+	GPIO.setup(DATA, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
+	GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
+	GPIO.output(EN, 1)
 
 def regClear():
 	GPIO.output(DATA, 0)
@@ -41,6 +44,7 @@ def interruptHandler(signal, frame):
 	print()
 	print("KeyboardInterrupt (ID: {}) has been caught. Cleaning up...".format(signal))
 	regClear()
+	GPIO.output(EN, 0)
 	GPIO.cleanup()
 	exit(0)
 
