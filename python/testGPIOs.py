@@ -70,4 +70,5 @@ def main():
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 
+initGPIO(GPIO)
 main()
