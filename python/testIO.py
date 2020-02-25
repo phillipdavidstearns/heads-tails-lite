@@ -26,19 +26,23 @@ def sayHello(kwargs):
 def interruptHandler(signal, frame):
 	print()
 	print("KeyboardInterrupt (ID: {}) has been caught. Cleaning up...".format(signal))
-	IO.disable()
-	IO.clear()
-	IO.GPIO.cleanup()
+	shutdownIO()
 	exit(0)
 
-def main():
-
-	global COUNT
-	
+def startupIO():
 	IO.init(pins, channels)
 	IO.attachInterrupt(interrupt,"CHANGE", sayHello)
 	IO.clear()
 	IO.enable()
+
+def shutdownIO():
+	IO.disable()
+	IO.clear()
+	IO.cleanup()
+
+def main():
+
+	global COUNT
 
 	while True:
 		IO.update(COUNT)
@@ -48,5 +52,6 @@ def main():
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 
+startupIO()
 main()
 

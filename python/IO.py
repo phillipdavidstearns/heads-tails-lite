@@ -10,7 +10,7 @@ CHANNELS=-1
 
 
 def init(pins, channels):
-
+	GPIO.cleanup()
 	GPIO.setmode(GPIO.BCM)
 
 	global STROBE
@@ -58,6 +58,8 @@ def attachInterrupt(pin, mode, callback):
 	GPIO.add_event_detect(pin, event)
 	GPIO.add_event_callback(pin, callback)
 
+def cleanup():
+	GPIO.cleanup()
 
 def enable():
 	GPIO.output(ENABLE, 1)
