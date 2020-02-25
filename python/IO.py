@@ -71,8 +71,8 @@ def clear():
 		GPIO.output(CLOCK, 0)
 		GPIO.output(CLOCK, 1)
 	GPIO.output(CLOCK, 0)
-	GPIO.output(STROBE, 0)
 	GPIO.output(STROBE, 1)
+	GPIO.output(STROBE, 0)
 
 def update(value):
 	for c in range(CHANNELS):
@@ -80,5 +80,5 @@ def update(value):
 		GPIO.output(DATA, value >> (CHANNELS - c - 1) & 1)
 		GPIO.output(CLOCK, 1)
 	GPIO.output(CLOCK, 0)
-	GPIO.output(STROBE, 0)
 	GPIO.output(STROBE, 1)
+	GPIO.output(STROBE, 0)
