@@ -65,7 +65,7 @@ def sayHello():
 
 def main():
 	REG.init(pins, channels)
-	REG.attachInterrupt(interrupt, sayHello)
+	REG.attachInterrupt(interrupt,"CHANGE", sayHello)
 	REG.clear(outputs, channels)
 	REG.update(412, outputs, channels)
 	REG.clear(outputs, channels)
