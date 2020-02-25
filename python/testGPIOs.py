@@ -8,7 +8,7 @@ import time
 STR = 17
 DATA = 27
 CLK = 22
-CHANNELS = 8; # number of output channels
+CHANNELS = 32; # number of output channels
 FPS = 30; # main refresh rate = frames per second
 counter = 0
 value = 0b11111111111111111111111111111111 # testing purposes
