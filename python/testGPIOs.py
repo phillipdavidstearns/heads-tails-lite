@@ -2,6 +2,7 @@
 
 import signal
 import RPi.GPIO as GPIO # using RPi.GPIO for non-PWM
+import time
 
 # GPIO pin numbers
 STR = 17
