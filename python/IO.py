@@ -82,3 +82,4 @@ def update(value):
 	GPIO.output(CLOCK, 0)
 	GPIO.output(STROBE, 1)
 	GPIO.output(STROBE, 0)
+	GPIO.output(DATA, 0)

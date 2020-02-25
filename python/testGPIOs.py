@@ -9,7 +9,7 @@ STR = 17
 DATA = 27
 CLK = 22
 EN = 23
-CHANNELS = 32; # number of output channels
+CHANNELS = 8; # number of output channels
 FPS = 30.0; # main refresh rate = frames per second
 counter = 0
 value = 0b11111111111111111111111111111111 # testing purposes
