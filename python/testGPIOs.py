@@ -19,7 +19,13 @@ def initGPIO():
 	GPIO.setup(STR, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
 	GPIO.setup(DATA, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
 	GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-	GPIO.setup(EN, GPIO.OUT, initial=GPIO.HIGH) # make pin into an output
+	GPIO.setup(EN, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
+
+def regEnable():
+	GPIO.output(EN, 1)
+
+def regDisable():
+	GPIO.output(EN, 1)
 
 def regClear():
 	GPIO.output(DATA, 0)
