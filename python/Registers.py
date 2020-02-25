@@ -22,9 +22,9 @@ def setMode(pins):
 def attachInterrupt(pin, mode, callback): 
 	if (mode == "falling" or mode == "FALLING"):
 		event = GPIO.FALLING
-	else if (mode == "rising" or mode == "RISING"):
+	elif (mode == "rising" or mode == "RISING"):
 		event = GPIO.RISING
-	else if (mode == "both" or mode == "BOTH" or mode == "change" or mode == "CHANGE"):
+	elif (mode == "both" or mode == "BOTH" or mode == "change" or mode == "CHANGE"):
 		event = GPIO.BOTH
 	else:
 		return
