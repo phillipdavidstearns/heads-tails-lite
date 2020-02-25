@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 
-# strobe = pins[0]
-# data = pins[1]
-# clock = pins[2]
-# enable = pins[3]
-
 import RPi.GPIO as GPIO
 
 STROBE=-1
@@ -30,12 +25,18 @@ def init(pins, channels):
 	ENABLE=pins[0][3]
 	CHANNELS=channels
 
+	print("Strobe Pin set to: "+str(STROBE))
+	print("Data Pin set to: "+str(DATA))
+	print("Clock Pin set to: "+str(CLOCK))
+	print("Enable Pin set to: "+str(ENABLE))
+	print("Number of register channels: "+str(CHANNELS))
+
 	if STROBE == -1 or DATA == -1 or CLOCK == -1 or ENABLE == -1:
 		print("Registers require 4 GPIO pins: strobe, data, clock, and enable")
 		return
 
 	if CHANNELS == -1:
-		print("Nnumber of channels must be greater than 0")
+		print("Number of channels must be greater than 0")
 		return
 
 	for pin in pins[0]: 
@@ -54,7 +55,6 @@ def attachInterrupt(pin, mode, callback):
 	else:
 		print("mode not recognized: "+str(mode))
 		return
-	print("Attaching callback \""+str(callback)+"\" to interrupt pin: "+str(pin)+" for "+str(mode))
 	GPIO.add_event_detect(pin, event)
 	GPIO.add_event_callback(pin, callback)
 
@@ -79,7 +79,5 @@ def update(value):
 		GPIO.output(CLOCK, 0)
 		GPIO.output(DATA, value >> (CHANNELS - c - 1) & 1)
 		GPIO.output(CLOCK, 1)
-	GPIO.output(CLOCK, 0)
-	GPIO.output(DATA, 0)
 	GPIO.output(STROBE, 1)
 	GPIO.output(STROBE, 0)
