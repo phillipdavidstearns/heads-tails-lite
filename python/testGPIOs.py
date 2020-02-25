@@ -39,7 +39,7 @@ def regClear():
 def regOutput(value):
 	for i in range(CHANNELS):
 		GPIO.output(CLK, 0)
-		GPIO.output(DATA, value >> (CHANNELS - i - 1)  & 1)
+		GPIO.output(DATA, value >> (CHANNELS - i - 1) & 1)
 		GPIO.output(CLK, 1)
 	GPIO.output(CLK, 0)
 	GPIO.output(STR, 1)

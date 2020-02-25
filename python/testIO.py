@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-import IO as IO
+import IO
 import time
+import signal
 
-COUNT=0
-LAST_TIME=0
+FPS=30.0
 
 # Pin assignments
 strobe = 17 # latch strobe GPIO pin
@@ -22,25 +22,27 @@ channels = 8 # number of output channels
 def sayHello(kwargs):
 	print("hello!")
 
-def main():
-	global COUNT
-	global LAST_TIME
+def interruptHandler(signal, frame):
+	print()
+	print("KeyboardInterrupt (ID: {}) has been caught. Cleaning up...".format(signal))
+	IO.disable()
+	IO.clear()
+	IO.GPIO.cleanup()
+	exit(0)
 
+def main():
 	IO.init(pins, channels)
 	IO.attachInterrupt(interrupt,"CHANGE", sayHello)
 	IO.clear()
 	IO.enable()
 
-	while COUNT < 256:
-		CURRENT_TIME=time.time()
-		if CURRENT_TIME - LAST_TIME > .1:
-			IO.update(COUNT)
-			COUNT+=1
-			LAST_TIME=CURRENT_TIME
+	while True:
+		IO.update(COUNT)
+		COUNT+=1
+		time.sleep( 1 / FPS )
 
-	IO.disable()
-	IO.clear()
-	IO.GPIO.cleanup()
+signal.signal(signal.SIGINT, interruptHandler)
+signal.signal(signal.SIGTERM, interruptHandler)
 
 main()
 
