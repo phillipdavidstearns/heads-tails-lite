@@ -28,18 +28,15 @@ def main():
 
 	IO.init(pins, channels)
 	IO.attachInterrupt(interrupt,"CHANGE", sayHello)
-	IO.clear()
 	IO.enable()
 
 	while COUNT < 256:
 		CURRENT_TIME=time.time()
-		if CURRENT_TIME - LAST_TIME > 1:
+		if CURRENT_TIME - LAST_TIME > .1:
 			IO.update(COUNT)
 			COUNT+=1
 			LAST_TIME=CURRENT_TIME
 
-	IO.disable()
-	IO.clear()
 	IO.GPIO.cleanup()
 
 main()
