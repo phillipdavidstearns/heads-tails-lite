@@ -67,8 +67,11 @@ def main():
 	REG.init(pins, channels)
 	REG.attachInterrupt(interrupt,"CHANGE", sayHello)
 	REG.clear()
-	REG.enable()
 	REG.update(412)
+	REG.enable()
+	time.sleep(1)
+	REG.disable()
 	REG.clear()
+	REG.GPIO.cleanup()
 
 main()
