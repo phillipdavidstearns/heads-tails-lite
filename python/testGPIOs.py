@@ -14,12 +14,12 @@ FPS = 30.0; # main refresh rate = frames per second
 counter = 0
 value = 0b11111111111111111111111111111111 # testing purposes
 
-def initGPIO(GPIO):
+def initGPIO():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(STR, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
 	GPIO.setup(DATA, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
 	GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-	GPIO.output(EN, 1)
+	GPIO.setup(EN, GPIO.OUT, initial=GPIO.HIGH) # make pin into an output
 
 def regClear():
 	GPIO.output(DATA, 0)
@@ -44,7 +44,6 @@ def interruptHandler(signal, frame):
 	print()
 	print("KeyboardInterrupt (ID: {}) has been caught. Cleaning up...".format(signal))
 	regClear()
-	GPIO.output(EN, 0)
 	GPIO.cleanup()
 	exit(0)
 
@@ -70,5 +69,5 @@ def main():
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 
-initGPIO(GPIO)
+initGPIO()
 main()
