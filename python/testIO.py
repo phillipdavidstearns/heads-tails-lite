@@ -4,6 +4,7 @@ import IO
 import time
 import signal
 
+COUNT=0
 FPS=30.0
 
 # Pin assignments
@@ -31,6 +32,9 @@ def interruptHandler(signal, frame):
 	exit(0)
 
 def main():
+
+	global COUNT
+	
 	IO.init(pins, channels)
 	IO.attachInterrupt(interrupt,"CHANGE", sayHello)
 	IO.clear()
