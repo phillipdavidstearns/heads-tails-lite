@@ -64,10 +64,11 @@ def sayHello():
 	print("hello!")
 
 def main():
-	REG.init(pins, channels)
+	REG.init(pins)
 	REG.attachInterrupt(interrupt,"CHANGE", sayHello)
-	REG.clear(outputs, channels)
-	REG.update(412, outputs, channels)
-	REG.clear(outputs, channels)
+	REG.clear()
+	REG.enable()
+	REG.update(412)
+	REG.clear()
 
 main()

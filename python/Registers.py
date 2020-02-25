@@ -11,6 +11,7 @@ STROBE=-1
 DATA=-1
 CLOCK=-1
 ENABLE=-1
+CHANNELS=-1
 
 
 def init(pins, channels):
@@ -31,6 +32,10 @@ def init(pins, channels):
 
 	if STROBE == -1 or DATA == -1 or CLOCK == -1 or ENABLE == -1:
 		print("Registers require 4 GPIO pins: strobe, data, clock, and enable")
+		return
+
+	if CHANNELS == -1:
+		print("Nnumber of channels must be greater than 0")
 		return
 
 	for pin in pins[0]: 
@@ -62,7 +67,7 @@ def disable():
 
 def clear():
 	GPIO.output(DATA, 0)
-	for c in range(CHANGE):
+	for c in range(CHANNELS):
 		GPIO.output(CLOCK, 0)
 		GPIO.output(CLOCK, 1)
 	GPIO.output(CLOCK, 0)
