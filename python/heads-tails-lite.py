@@ -9,14 +9,10 @@ import time
 
 #------------------------------------------------------------------------
 
-CHANNELS=24
-FPS = 30
-
 tzOffset = -5 * 3600 # timezone offset
 dotOffset = 12 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
 deviation = 0
 power_line_time=time.time()
-
 behaviors=[]
 channelStates=[]
 eventTimes=[]
@@ -26,66 +22,31 @@ resynchFlag=True
 refreshScoreFlag=True
 headlightFlag=True
 
-#------------------------------------------------------------------------
-#	PWM
-#	Used to set the brightness of the headlights
-# 	***NOTE***
-#	pigpiod but be running / restarted prior to running this script
+fps=30.0
+channels = 24 # number of output channels
 
-PWM_PIN = 12
-PWM_FREQ = 14000 # frequency of PWM
+# Pin assignments
 
-# initializes pigpio
-PWM = pigpio.pi()
+# outputs
+strobe = 17 # latch strobe GPIO pin
+data = 27 # data GPIO pin
+clock = 22 # clock GPIO pin
+enable = 23 # IOister enable GPIO pin
 
-if not PWM.connected:
-	print("pigpio faile to initialize.")
-	exit()
+# inputs
+interrupt = 24 # interrupt GPIO pin
 
-#------------------------------------------------------------------------
-#	RPi.GPIO
-#	Non-PWM IO
+# pwm
+pwm_pin = 12 # pwm pin
+pwm_freq = 14000
+pwm_brightness = 0
 
-# Shift register pings
-STR = 17
-DATA = 27
-CLK = 22
-# Interrupt pin for grid synch
-GRID = 23
+# make composite lists to pass along to IO
+outputs = [ strobe, data, clock, enable]
+inputs = [ interrupt ]
+pwm_args = [ pwm_pin, pwm_freq, pwm_brightness ]
 
-def initGPIO():
-	GPIO.setwarnings(False)
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(STR, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-	GPIO.setup(DATA, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-	GPIO.setup(CLK, GPIO.OUT, initial=GPIO.LOW) # make pin into an output
-	GPIO.setup(GRID, GPIO.IN) # make pin into an input
-	GPIO.add_event_detect(GRID, GPIO.BOTH, callback=incrementCounter)
-
-def regClear():
-	GPIO.output(DATA, 0)
-	for i in range(CHANNELS):
-		GPIO.output(CLK, 0)
-		GPIO.output(CLK, 1)
-	GPIO.output(CLK, 0)
-	GPIO.output(STR, 1)
-	GPIO.output(STR, 0)
-
-def regOutput(channels):
-	for i in range(CHANNELS):
-		GPIO.output(CLK, 0)
-		GPIO.output(DATA, channels[CHANNELS - i - 1])
-		GPIO.output(CLK, 1)
-	GPIO.output(CLK, 0)
-	GPIO.output(STR, 1)
-	GPIO.output(STR, 0)
-	GPIO.output(DATA, 0)
-
-INCREMENT = 1/120.0 # each interrupt = 1/120th of a second in "grid-time"
-
-def incrementCounter(channel):
-	global power_line_time
-	power_line_time += INCREMENT
+pins = [ outputs , inputs, pwm_args ]
 
 #------------------------------------------------------------------------
 #	HEADLIGHTS
@@ -148,7 +109,7 @@ def updateBehaviors(behaviors):
 	global eventTimes
 	global eventIndexes
 	behaviorList=makeBehaviorList(behaviors)
-	for c in range(CHANNELS):
+	for c in range(channels):
 		behavior = behaviors[behaviorList[c]]
 		timings = generateTimings(behavior)
 		eventTimes[c]+=timings[0]
@@ -158,7 +119,7 @@ def updateOutput():
 	global eventTimes
 	global eventIndexes
 	global channelStates
-	for c in range(CHANNELS):
+	for c in range(channels):
 		if eventTimes[c]:
 			if (adjustedTime() > eventTimes[c][0]):
 				channelStates[c]=eventIndexes[c][0]
@@ -185,7 +146,7 @@ def generateTimings(behavior):
 def makeBehaviorList(behaviors):
 	behaviorList=[]
 	itemCount=[0]*len(behaviors)
-	while (len(behaviorList) < CHANNELS):
+	while (len(behaviorList) < channels):
 		candidate=random.randint(0,len(behaviors)-1)
 		if (itemCount[candidate] < 2):
 			itemCount[candidate] += 1
@@ -206,7 +167,7 @@ def setup():
 	global channelStates
 	global behaviors
 
-	for i in range(CHANNELS):
+	for i in range(channels):
 		eventTimes.append([])
 		eventIndexes.append([])
 		channelStates.append(0)
@@ -279,12 +240,13 @@ def main():
 		elif(cycleTime != 0 and not updateFlag):
 			updateFlag=True
 
-		regOutput(updateOutput())
+		IO.update(updateOutput())
 
-		time.sleep(1/FPS)
+		time.sleep(1/fps)
 
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
+signal.signal(signal.SIGHUP, interruptHandler)
 
 stetup()
 main()
