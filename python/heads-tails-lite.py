@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+#------------------------------------------------------------------------
+# heads-tails-lite.py
+#
+# Refactoring of heads-tails.py
+# 1. 
+
 from fileHandlers import *
 import IO
 import signal
@@ -9,16 +15,16 @@ import time
 
 #------------------------------------------------------------------------
 
-verbose=True
+verbose=False
 
 tzOffset = -5 * 3600 # timezone offset
-dotOffset = 12 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
+dotOffset = 0 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
 deviation = 0
 power_line_time=time.time()
 behaviors=[]
 channelStates=[]
 eventTimes=[]
-eventIndexes=[]
+eventStates=[]
 updateFlag=True
 resynchFlag=True
 refreshScoreFlag=True
@@ -120,25 +126,24 @@ def adjustedTime():
 def updateEvents(behaviors):
 	verbose("[+] Updating behavior events")
 	global eventTimes
-	global eventIndexes
-	behaviorList=makeBehaviorList(behaviors)
+	global eventStates
+	eventList=makeEventList(behaviors)
 	for c in range(channels):
-		behavior = behaviors[behaviorList[c]]
-		timings = generateTimings(behavior)
+		timings = generateTimings(behaviors[eventList[c]])
 		eventTimes[c]+=timings[0]
-		eventIndexes[c]+=timings[1]
-	verbose([eventTimes,eventIndexes])
+		eventStates[c]+=timings[1]
+	verbose([eventTimes,eventStates])
 
 def updateChannels():
 	verbose("[+] Updating channels")
 	global eventTimes
-	global eventIndexes
+	global eventStates
 	global channelStates
 	for c in range(channels):
 		if eventTimes[c]:
 			if (adjustedTime() > eventTimes[c][0]):
-				channelStates[c]=eventIndexes[c][0]
-				eventIndexes[c]=eventIndexes[c][1:] # remove from queue
+				channelStates[c]=eventStates[c][0]
+				eventStates[c]=eventStates[c][1:] # remove from queue
 				eventTimes[c]=eventTimes[c][1:] # remove from queue
 				if (len(eventTimes[c])==0):
 					channelStates[c]=0
@@ -148,30 +153,30 @@ def updateChannels():
 def generateTimings(behavior):
 	verbose("[+] Generate timings")
 	times=[]
-	indexes=[]
+	states=[]
 	offset = random.uniform(-behavior[2],behavior[2])
 	startTime=adjustedTime()
 	for t in range(len(behavior[0])):
 		eventTime = startTime + offset + behavior[0][t] + random.uniform(-behavior[1][t],behavior[1][t])
 		times.append(eventTime)
 		if (t%2==0):
-			indexes.append(1)
+			states.append(1)
 		else:
-			indexes.append(0)
-	verbose([times, indexes])
-	return [times, indexes]
+			states.append(0)
+	verbose([times, states])
+	return [times, states]
 
-def makeBehaviorList(behaviors):
-	verbose("[+] Making behavior list")
-	behaviorList=[]
+def makeEventList(behaviors):
+	verbose("[+] Making behavior event list")
+	eventList=[]
 	itemCount=[0]*len(behaviors)
-	while (len(behaviorList) < channels):
+	while (len(eventList) < channels):
 		candidate=random.randint(0,len(behaviors)-1)
 		if (itemCount[candidate] < 2):
+			eventList.append(random.randint(0,len(behaviors)-1))
 			itemCount[candidate] += 1
-			behaviorList.append(random.randint(0,len(behaviors)-1))
-	verbose(behaviorList)
-	return behaviorList
+	verbose(eventList)
+	return eventList
 
 #------------------------------------------------------------------------
 
@@ -183,22 +188,23 @@ def interruptHandler(signal, frame):
 
 def setup():
 	global eventTimes
-	global eventIndexes
+	global eventStates
 	global channelStates
 	global behaviors
 
 	# clear channel state and event queues
 	for i in range(channels):
 		eventTimes.append([])
-		eventIndexes.append([])
+		eventStates.append([])
 		channelStates.append(0)
 
 	startupIO()
-	fetchScore()
+	# fetchScore() # check that the current score is present in ./data/
 	behaviors = loadScore()
-	resynch()
+	# resynch()
 	updateHeadlightTimes()
 	headlights = loadHeadlights()
+	print(headlights)
 
 def startupIO():
 	IO.init(pins, channels)
@@ -213,7 +219,7 @@ def shutdownIO():
 def main():
 
 	global eventTimes
-	global eventIndexes
+	global eventStates
 	global channelStates
 	global lastCycleTime
 	global power_line_time
@@ -227,37 +233,33 @@ def main():
 
 	while True:
 
-		updateHeadlights()
+		currentTime = int(adjustedTime())
 
-		# currentTime = int(adjustedTime())
-		currentTime = int(time.time())
-
-		resynchTime = currentTime % 3600 # triggers every hour
-		refreshScoreTime = currentTime  % 1800 # triggers every 1/2 hour
 		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
-		cycleTime = currentTime % 90
-
 		if(refreshHeadlightTime == 0 and headlightFlag):
 			updateHeadlightTimes()
 			headlightFlag = False
 		elif(refreshHeadlightTime != 0 and not headlightFlag):
 			headlightFlag = True
 
-		if(resynchTime == 0 and resynchFlag):
-			resynch()
-			resynchFlag = False
-		elif(resynchTime != 0 and not resynchFlag):
-			resynchFlag = True
+		# resynchTime = currentTime % 3600 # triggers every hour
+		# if(resynchTime == 0 and resynchFlag):
+		# 	resynch()
+		# 	resynchFlag = False
+		# elif(resynchTime != 0 and not resynchFlag):
+		# 	resynchFlag = True
 
-		if(refreshScoreTime == 0 and refreshScoreFlag):
-			verbose("Fetching score")
-			if fetchScore():
-				behaviors = loadScore()
-				verbose(behaviors)
-			refreshScoreFlag = False
-		elif(refreshScoreTime != 0 and not refreshScoreFlag):
-			refreshScoreFlag = True
+		# refreshScoreTime = currentTime  % 1800 # triggers every 1/2 hour
+		# if(refreshScoreTime == 0 and refreshScoreFlag):
+		# 	verbose("Fetching score")
+		# 	if fetchScore():
+		# 		behaviors = loadScore()
+		# 		verbose(behaviors)
+		# 	refreshScoreFlag = False
+		# elif(refreshScoreTime != 0 and not refreshScoreFlag):
+		# 	refreshScoreFlag = True
 
+		cycleTime = currentTime % 90
 		if(cycleTime == 0 and updateFlag):
 			updateEvents(behaviors)
 			updateFlag = False
@@ -265,7 +267,7 @@ def main():
 			updateFlag = True
 
 		IO.update(updateChannels())
-
+		updateHeadlights()
 		time.sleep(1/fps)
 
 signal.signal(signal.SIGINT, interruptHandler)
