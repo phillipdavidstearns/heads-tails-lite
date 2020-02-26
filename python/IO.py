@@ -106,15 +106,15 @@ def clear():
 	GPIO.output(STROBE, 1)
 	GPIO.output(STROBE, 0)
 
-def update(value):
-	for c in range(CHANNELS):
-		GPIO.output(CLOCK, 0)
-		GPIO.output(DATA, value >> (CHANNELS - c - 1) & 1)
-		GPIO.output(CLOCK, 1)
-	GPIO.output(CLOCK, 0)
-	GPIO.output(STROBE, 1)
-	GPIO.output(STROBE, 0)
-	GPIO.output(DATA, 0)
+# def update(value):
+# 	for c in range(CHANNELS):
+# 		GPIO.output(CLOCK, 0)
+# 		GPIO.output(DATA, value >> (CHANNELS - c - 1) & 1)
+# 		GPIO.output(CLOCK, 1)
+# 	GPIO.output(CLOCK, 0)
+# 	GPIO.output(STROBE, 1)
+# 	GPIO.output(STROBE, 0)
+# 	GPIO.output(DATA, 0)
 
 def update(values):
 	for c in range(CHANNELS):
