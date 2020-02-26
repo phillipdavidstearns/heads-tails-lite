@@ -33,9 +33,6 @@ data = 27 # data GPIO pin
 clock = 22 # clock GPIO pin
 enable = 23 # IOister enable GPIO pin
 
-# inputs
-interrupt = 24 # interrupt GPIO pin
-
 # pwm
 pwm_pin = 12 # pwm pin
 pwm_freq = 14000
@@ -43,7 +40,7 @@ pwm_brightness = 0
 
 # make composite lists to pass along to IO
 outputs = [ strobe, data, clock, enable]
-inputs = [ interrupt ]
+inputs = [ ]
 pwm_args = [ pwm_pin, pwm_freq, pwm_brightness ]
 
 pins = [ outputs , inputs, pwm_args ]
@@ -77,9 +74,9 @@ def updateHeadlightTimes():
 def updateHeadlights():
 	currentTime=int(adjustedTime())%86400
 	if ( currentTime >= headlightTimes[0] and currentTime < headlightTimes[1] ):
-		PWM.hardware_PWM(PWM_PIN, PWM_FREQ, int(DIM*1000000) ) # dim
+		IO.setPWM(DIM) # dim
 	else:
-		PWM.hardware_PWM(PWM_PIN, PWM_FREQ, int(BRIGHT*1000000) ) # bright
+		IO.setPWM(BRIGHT) # dim
 
 #------------------------------------------------------------------------
 #	DEVIATION
@@ -248,5 +245,5 @@ signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 signal.signal(signal.SIGHUP, interruptHandler)
 
-stetup()
+setup()
 main()

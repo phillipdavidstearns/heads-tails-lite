@@ -15,7 +15,6 @@ PWM_VAL = 0
 
 PWM = object()
 
-
 # pins is a list of lists
 # pins[0] are basic output pins
 # pins[1] are basic input pins
@@ -106,16 +105,7 @@ def clear():
 	GPIO.output(STROBE, 1)
 	GPIO.output(STROBE, 0)
 
-# def update(value):
-# 	for c in range(CHANNELS):
-# 		GPIO.output(CLOCK, 0)
-# 		GPIO.output(DATA, value >> (CHANNELS - c - 1) & 1)
-# 		GPIO.output(CLOCK, 1)
-# 	GPIO.output(CLOCK, 0)
-# 	GPIO.output(STROBE, 1)
-# 	GPIO.output(STROBE, 0)
-# 	GPIO.output(DATA, 0)
-
+# takes a list of boolean values and outputs them
 def update(values):
 	for c in range(CHANNELS):
 		GPIO.output(CLOCK, 0)
