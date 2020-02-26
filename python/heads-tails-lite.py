@@ -205,31 +205,32 @@ def main():
 
 		updateHeadlights()
 
-		currentTime = int(adjustedTime())
-
-		resynchTime = currentTime % 3600 # triggers every hour
-		refreshScoreTime = currentTime  % 1800 # triggers every 1/2 hour
-		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
+		# currentTime = int(adjustedTime())
+		currentTime = int(time.time())
+		
+		# resynchTime = currentTime % 3600 # triggers every hour
+		# refreshScoreTime = currentTime  % 1800 # triggers every 1/2 hour
+		# refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
 		cycleTime = currentTime % 90
 
-		if(refreshHeadlightTime == 0 and headlightFlag):
-			updateHeadlightTimes()
-			headlightFlag = False
-		elif(refreshHeadlightTime != 0 and not headlightFlag):
-			headlightFlag = True
+		# if(refreshHeadlightTime == 0 and headlightFlag):
+		# 	updateHeadlightTimes()
+		# 	headlightFlag = False
+		# elif(refreshHeadlightTime != 0 and not headlightFlag):
+		# 	headlightFlag = True
 
-		if(resynchTime == 0 and resynchFlag):
-			resynch()
-			resynchFlag = False
-		elif(resynchTime != 0 and not resynchFlag):
-			resynchFlag = True
+		# if(resynchTime == 0 and resynchFlag):
+		# 	resynch()
+		# 	resynchFlag = False
+		# elif(resynchTime != 0 and not resynchFlag):
+		# 	resynchFlag = True
 
-		if(refreshScoreTime == 0 and refreshScoreFlag):
-			if fetchScore():
-				behaviors = loadScore()
-			refreshScoreFlag = False
-		elif(refreshScoreTime != 0 and not refreshScoreFlag):
-			refreshScoreFlag = True
+		# if(refreshScoreTime == 0 and refreshScoreFlag):
+		# 	if fetchScore():
+		# 		behaviors = loadScore()
+		# 	refreshScoreFlag = False
+		# elif(refreshScoreTime != 0 and not refreshScoreFlag):
+		# 	refreshScoreFlag = True
 
 		if(cycleTime == 0 and updateFlag):
 			updateBehaviors(behaviors)
