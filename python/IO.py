@@ -23,7 +23,7 @@ PWM = object()
 
 def init(pins, channels):
 
-	GPIO.cleanup() # clear any pit assignments left over from unclean terminations
+	GPIO.setwarnings(False)
 	GPIO.setmode(GPIO.BCM) # use GPIO pin numbers
 
 	# Setup hardware PWM
