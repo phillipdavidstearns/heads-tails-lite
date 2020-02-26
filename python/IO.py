@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import RPi.GPIO as GPIO
+import pigpio
 
 STROBE=-1
 DATA=-1
@@ -8,10 +9,41 @@ CLOCK=-1
 ENABLE=-1
 CHANNELS=-1
 
+PWM_PIN = -1
+PWM_FREQ = -1
+PWM_VAL = 0
+
+PWM = object()
+
+
+# pins is a list of lists
+# pins[0] are basic output pins
+# pins[1] are basic input pins
+# pins[2] are hardware PWM values: [ pin, freq, brightness ]
 
 def init(pins, channels):
-	GPIO.cleanup()
-	GPIO.setmode(GPIO.BCM)
+
+	GPIO.cleanup() # clear any pit assignments left over from unclean terminations
+	GPIO.setmode(GPIO.BCM) # use GPIO pin numbers
+
+	# Setup hardware PWM
+
+	global PWM
+	global PWM_PIN
+	global PWM_FREQ
+	global PWM_VAL
+
+	PWM = pigpio.pi()
+	if not PWM.connected:
+		exit()
+
+	PWM_PIN=pins[2][0]
+	PWM_FREQ=pins[2][1]
+	PWM_VAL=pins[2][2]
+
+	setPWM(PWM_VAL)
+
+	# Setup Rregister outputs
 
 	global STROBE
 	global DATA
@@ -24,12 +56,6 @@ def init(pins, channels):
 	CLOCK=pins[0][2]
 	ENABLE=pins[0][3]
 	CHANNELS=channels
-
-	print("Strobe Pin set to: "+str(STROBE))
-	print("Data Pin set to: "+str(DATA))
-	print("Clock Pin set to: "+str(CLOCK))
-	print("Enable Pin set to: "+str(ENABLE))
-	print("Number of register channels: "+str(CHANNELS))
 
 	if STROBE == -1 or DATA == -1 or CLOCK == -1 or ENABLE == -1:
 		print("Registers require 4 GPIO pins: strobe, data, clock, and enable")
@@ -44,6 +70,8 @@ def init(pins, channels):
 	for pin in pins[1]: 
 		GPIO.setup(pin, GPIO.IN)
 
+def setPWM(brightness):
+	PWM.hardware_PWM(PWM_PIN, PWM_FREQ, brightness*1000000.0)
 
 def attachInterrupt(pin, mode, callback): 
 	if (mode == "falling" or mode == "FALLING"):
@@ -60,6 +88,8 @@ def attachInterrupt(pin, mode, callback):
 
 def cleanup():
 	GPIO.cleanup()
+	setPWM(0)
+	PWM.stop()
 
 def enable():
 	GPIO.output(ENABLE, 1)

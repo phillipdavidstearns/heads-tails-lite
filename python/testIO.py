@@ -4,21 +4,33 @@ import IO
 import time
 import signal
 
-COUNT=0
-FPS=30.0
+count=0
+fps=30.0
+channels = 8 # number of output channels
 
 # Pin assignments
+
+# outputs
 strobe = 17 # latch strobe GPIO pin
 data = 27 # data GPIO pin
 clock = 22 # clock GPIO pin
 enable = 23 # IOister enable GPIO pin
+
+# inputs
 interrupt = 24 # interrupt GPIO pin
 
+# pwm
+pwm_pin = 12 # pwm pin
+pwm_freq = 14000
+pwm_brightness = 0
+
+# make composite lists to pass along to IO
 outputs = [ strobe, data, clock, enable]
 inputs = [ interrupt ]
-pins = [ outputs , inputs ]
+pmw = [ pwm_pin, pwm_freq, pwm_brightness ]
 
-channels = 8 # number of output channels
+pins = [ outputs , inputs, pwm ]
+
 
 def sayHello(kwargs):
 	print("hello!")
@@ -42,12 +54,16 @@ def shutdownIO():
 
 def main():
 
-	global COUNT
+	global count
 
 	while True:
-		IO.update(COUNT)
-		COUNT+=1
-		time.sleep( 1 / FPS )
+		IO.update(count)
+		count+=1
+		if (counter % 300 == 150):
+			IO.setPWM(1.0)
+		elif (counter % 300 == 0):
+			IO.setPWM(0.1)
+		time.sleep( 1 / fps )
 
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
