@@ -1,16 +1,15 @@
 #!/usr/bin/python3
 
 from fileHandlers import *
+import IO
 import signal
 import os
-import pigpio # using this for hardware PWM, software is not stable!!!
-import RPi.GPIO as GPIO # using RPi.GPIO for non-PWM
 import random
 import time
 
 #------------------------------------------------------------------------
 
-CHANNELS=32
+CHANNELS=24
 FPS = 30
 
 tzOffset = -5 * 3600 # timezone offset
@@ -198,10 +197,7 @@ def makeBehaviorList(behaviors):
 def interruptHandler(signal, frame):
 	print()
 	print("Interrupt (ID: {}) has been caught. Cleaning up...".format(signal))
-	regClear()
-	GPIO.cleanup()
-	PWM.hardware_PWM(PWM_PIN, PWM_FREQ, 0)
-	PWM.stop()
+	shutdownIO()
 	os._exit(0)
 
 def setup():
@@ -215,13 +211,22 @@ def setup():
 		eventIndexes.append([])
 		channelStates.append(0)
 
-	initGPIO()
-	regClear()
+	startupIO()
 	fetchScore()
 	behaviors = loadScore()
 	resynch()
 	updateHeadlightTimes()
 	headlights = loadHeadlights()
+
+def startupIO():
+	IO.init(pins, channels)
+	IO.clear()
+	IO.enable()
+
+def shutdownIO():
+	IO.disable()
+	IO.clear()
+	IO.cleanup()
 
 def main():
 
@@ -281,5 +286,5 @@ def main():
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 
-setup()
+stetup()
 main()

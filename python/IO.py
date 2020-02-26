@@ -115,3 +115,13 @@ def update(value):
 	GPIO.output(STROBE, 1)
 	GPIO.output(STROBE, 0)
 	GPIO.output(DATA, 0)
+
+def update(values=[]*CHANNELS):
+	for c in range(CHANNELS):
+		GPIO.output(CLOCK, 0)
+		GPIO.output(DATA, values[CHANNELS - i - 1])
+		GPIO.output(CLOCK, 1)
+	GPIO.output(CLOCK, 0)
+	GPIO.output(STROBE, 1)
+	GPIO.output(STROBE, 0)
+	GPIO.output(DATA, 0)
