@@ -9,8 +9,10 @@ import time
 
 #------------------------------------------------------------------------
 
+verbose=True
+
 tzOffset = -5 * 3600 # timezone offset
-dotOffset = 12 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
+# dotOffset = 12 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
 deviation = 0
 power_line_time=time.time()
 behaviors=[]
@@ -46,6 +48,13 @@ pwm_args = [ pwm_pin, pwm_freq, pwm_brightness ]
 pins = [ outputs , inputs, pwm_args ]
 
 #------------------------------------------------------------------------
+#	verbose or debug mode
+
+def verbose(message):
+	if verbose:
+		print(message)
+
+#------------------------------------------------------------------------
 #	HEADLIGHTS
 #	updating of the actual headlight timetables is done using functions in fileHandlers.py
 #		* fetchHeadlights()
@@ -60,18 +69,22 @@ BRIGHT = 1.0
 
 # fetch the current date and set headlight timings accordingly
 def updateHeadlightTimes():
+	verbose("[+] Updating headlight timings")
 	date=str(time.localtime()[1])+'/'+str(time.localtime()[2])
+	verbose(date)
 	try: # if the date is accounted for, we good
 		global headlightTimes
 		dim = headlights[date][0].split(':')
 		bright = headlights[date][1].split(':')
 		headlightTimes[0]=int(dim[0])*3600+int(dim[1])*60
 		headlightTimes[1]=int(bright[0])*3600+int(bright[1])*60
+		verbose("[+] headlight times: " + headlightTimes)
 	except: # otherwise we go with the defaults or last used
 		pass
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights():
+	verbose("[+] Setting headlight brightness")
 	currentTime=int(adjustedTime())%86400
 	if ( currentTime >= headlightTimes[0] and currentTime < headlightTimes[1] ):
 		IO.setPWM(DIM) # dim
@@ -79,13 +92,14 @@ def updateHeadlights():
 		IO.setPWM(BRIGHT) # dim
 
 #------------------------------------------------------------------------
-#	DEVIATION
-#	
+#	DEVIATION 
+#	>> NOT USED FOR FREE RUNNING MODE<<
 # 	* fetchDeviation()
 # 	* deviationChanged()
 # 	* loadDeviation()
 
 def resynch():
+	verbose("[+] Updating deviation amount")
 	global power_line_time
 	global deviation
 	if fetchDeviation():
@@ -98,11 +112,13 @@ def resynch():
 
 # Provides a reading of time that should be synched to the grid
 def adjustedTime():
-	return power_line_time + tzOffset + dotOffset + deviation
+	# return power_line_time + tzOffset + dotOffset + deviation
+	return time.time() + tzOffset + dotOffset + deviation
 
 #------------------------------------------------------------------------
 
-def updateBehaviors(behaviors):
+def updateEvents(behaviors):
+	verbose("[+] Updating behavior events")
 	global eventTimes
 	global eventIndexes
 	behaviorList=makeBehaviorList(behaviors)
@@ -111,8 +127,10 @@ def updateBehaviors(behaviors):
 		timings = generateTimings(behavior)
 		eventTimes[c]+=timings[0]
 		eventIndexes[c]+=timings[1]
+	verbose([eventTimes,eventIndexes])
 
-def updateOutput():
+def updateChannels():
+	verbose("[+] Updating channels")
 	global eventTimes
 	global eventIndexes
 	global channelStates
@@ -120,13 +138,15 @@ def updateOutput():
 		if eventTimes[c]:
 			if (adjustedTime() > eventTimes[c][0]):
 				channelStates[c]=eventIndexes[c][0]
-				eventIndexes[c]=eventIndexes[c][1:]
-				eventTimes[c]=eventTimes[c][1:]
+				eventIndexes[c]=eventIndexes[c][1:] # remove from queue
+				eventTimes[c]=eventTimes[c][1:] # remove from queue
 				if (len(eventTimes[c])==0):
 					channelStates[c]=0
+	verbose(channelStates)
 	return channelStates
 
 def generateTimings(behavior):
+	verbose("[+] Generate timings")
 	times=[]
 	indexes=[]
 	offset = random.uniform(-behavior[2],behavior[2])
@@ -138,9 +158,11 @@ def generateTimings(behavior):
 			indexes.append(1)
 		else:
 			indexes.append(0)
+	verbose([times, indexes])
 	return [times, indexes]
 
 def makeBehaviorList(behaviors):
+	verbose("[+] Making behavior list")
 	behaviorList=[]
 	itemCount=[0]*len(behaviors)
 	while (len(behaviorList) < channels):
@@ -148,6 +170,7 @@ def makeBehaviorList(behaviors):
 		if (itemCount[candidate] < 2):
 			itemCount[candidate] += 1
 			behaviorList.append(random.randint(0,len(behaviors)-1))
+	verbose(behaviorList)
 	return behaviorList
 
 #------------------------------------------------------------------------
@@ -164,6 +187,7 @@ def setup():
 	global channelStates
 	global behaviors
 
+	# clear channel state and event queues
 	for i in range(channels):
 		eventTimes.append([])
 		eventIndexes.append([])
@@ -207,7 +231,7 @@ def main():
 
 		# currentTime = int(adjustedTime())
 		currentTime = int(time.time())
-		
+
 		resynchTime = currentTime % 3600 # triggers every hour
 		refreshScoreTime = currentTime  % 1800 # triggers every 1/2 hour
 		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
@@ -226,19 +250,21 @@ def main():
 			resynchFlag = True
 
 		if(refreshScoreTime == 0 and refreshScoreFlag):
+			verbose("Fetching score")
 			if fetchScore():
 				behaviors = loadScore()
+				verbose(behaviors)
 			refreshScoreFlag = False
 		elif(refreshScoreTime != 0 and not refreshScoreFlag):
 			refreshScoreFlag = True
 
 		if(cycleTime == 0 and updateFlag):
-			updateBehaviors(behaviors)
+			updateEvents(behaviors)
 			updateFlag = False
 		elif(cycleTime != 0 and not updateFlag):
-			updateFlag=True
+			updateFlag = True
 
-		IO.update(updateOutput())
+		IO.update(updateChannels())
 
 		time.sleep(1/fps)
 
