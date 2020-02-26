@@ -27,9 +27,9 @@ pwm_brightness = 0
 # make composite lists to pass along to IO
 outputs = [ strobe, data, clock, enable]
 inputs = [ interrupt ]
-pmw = [ pwm_pin, pwm_freq, pwm_brightness ]
+pwm_args = [ pwm_pin, pwm_freq, pwm_brightness ]
 
-pins = [ outputs , inputs, pwm ]
+pins = [ outputs , inputs, pwm_args ]
 
 
 def sayHello(kwargs):
