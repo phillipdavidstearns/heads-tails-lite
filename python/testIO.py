@@ -59,9 +59,9 @@ def main():
 	while True:
 		IO.update(count)
 		count+=1
-		if (counter % 300 == 150):
+		if (count % 300 == 150):
 			IO.setPWM(1.0)
-		elif (counter % 300 == 0):
+		elif (count % 300 == 0):
 			IO.setPWM(0.1)
 		time.sleep( 1 / fps )
 
