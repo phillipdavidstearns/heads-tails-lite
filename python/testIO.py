@@ -52,12 +52,18 @@ def shutdownIO():
 	IO.clear()
 	IO.cleanup()
 
+def boolean_list(value):
+	booleans=[]
+	for i in range(0,32):
+		booleans+= value >> i & 1
+	return booleans
+
 def main():
 
 	global count
 
 	while True:
-		IO.update(count)
+		IO.update(boolean_list(count))
 		count+=1
 		if (count % 300 == 150):
 			IO.setPWM(1.0)
