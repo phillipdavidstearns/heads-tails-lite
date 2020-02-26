@@ -55,7 +55,7 @@ def shutdownIO():
 def boolean_list(value):
 	booleans=[]
 	for i in range(0,32):
-		booleans+= value >> i & 1
+		booleans.append(value >> i & 1)
 	return booleans
 
 def main():
