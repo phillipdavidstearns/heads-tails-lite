@@ -15,7 +15,7 @@ import time
 
 #------------------------------------------------------------------------
 
-verbose=False
+verbose = False
 
 tzOffset = -5 * 3600 # timezone offset
 dotOffset = 0 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
