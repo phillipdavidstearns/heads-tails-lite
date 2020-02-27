@@ -20,16 +20,16 @@ verbose = False
 tzOffset = -5 * 3600 # timezone offset
 dotOffset = 0 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
 deviation = 0
-power_line_time=time.time()
-behaviors=[]
-channelStates=[]
-eventTimes=[]
-eventStates=[]
-headlights=[]
-updateFlag=True
-resynchFlag=True
-refreshScoreFlag=True
-headlightFlag=True
+power_line_time = time.time()
+behaviors = []
+channelStates = []
+eventTimes = []
+eventStates = []
+headlights = []
+updateFlag = True
+resynchFlag = True
+refreshScoreFlag = True
+headlightFlag = True
 
 fps=30.0
 channels = 24 # number of output channels
@@ -57,7 +57,7 @@ pins = [ outputs , inputs, pwm_args ]
 #------------------------------------------------------------------------
 #	verbose or debug mode
 
-def verbose(message):
+def debug(message):
 	if verbose:
 		print(message)
 
@@ -76,24 +76,22 @@ BRIGHT = 1.0
 
 # fetch the current date and set headlight timings accordingly
 def updateHeadlightTimes():
-	verbose("[+] Updating headlight timings")
+	debug("[+] Updating headlight timings")
 	date=str(time.localtime()[1])+'/'+str(time.localtime()[2])
-	verbose(date)
+	debug(date)
 	try: # if the date is accounted for, we good
 		global headlightTimes
 		dim = headlights[date][0].split(':')
 		bright = headlights[date][1].split(':')
-		print(dim)
-		pring(bright)
 		headlightTimes[0]=int(dim[0])*3600+int(dim[1])*60
 		headlightTimes[1]=int(bright[0])*3600+int(bright[1])*60
-		verbose("[+] headlight times: " + headlightTimes)
+		debug("[+] headlight times: " + headlightTimes)
 	except: # otherwise we go with the defaults or last used
 		pass
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights():
-	verbose("[+] Setting headlight brightness")
+	debug("[+] Setting headlight brightness")
 	currentTime=int(adjustedTime())%86400
 	if ( currentTime >= headlightTimes[0] and currentTime < headlightTimes[1] ):
 		IO.setPWM(DIM) # dim
@@ -108,7 +106,7 @@ def updateHeadlights():
 # 	* loadDeviation()
 
 def resynch():
-	verbose("[+] Updating deviation amount")
+	debug("[+] Updating deviation amount")
 	global power_line_time
 	global deviation
 	if fetchDeviation():
@@ -127,7 +125,7 @@ def adjustedTime():
 #------------------------------------------------------------------------
 
 def updateEvents(behaviors):
-	verbose("[+] Updating behavior events")
+	debug("[+] Updating behavior events")
 	global eventTimes
 	global eventStates
 	eventList=makeEventList(behaviors)
@@ -135,10 +133,10 @@ def updateEvents(behaviors):
 		timings = generateTimings(behaviors[eventList[c]])
 		eventTimes[c]+=timings[0]
 		eventStates[c]+=timings[1]
-	verbose([eventTimes,eventStates])
+	debug([eventTimes,eventStates])
 
 def updateChannels():
-	verbose("[+] Updating channels")
+	debug("[+] Updating channels")
 	global eventTimes
 	global eventStates
 	global channelStates
@@ -150,11 +148,11 @@ def updateChannels():
 				eventTimes[c]=eventTimes[c][1:] # remove from queue
 				if (len(eventTimes[c])==0):
 					channelStates[c]=0
-	verbose(channelStates)
+	debug(channelStates)
 	return channelStates
 
 def generateTimings(behavior):
-	verbose("[+] Generate timings")
+	debug("[+] Generate timings")
 	times=[]
 	states=[]
 	offset = random.uniform(-behavior[2],behavior[2])
@@ -166,11 +164,11 @@ def generateTimings(behavior):
 			states.append(1)
 		else:
 			states.append(0)
-	verbose([times, states])
+	debug([times, states])
 	return [times, states]
 
 def makeEventList(behaviors):
-	verbose("[+] Making behavior event list")
+	debug("[+] Making behavior event list")
 	eventList=[]
 	itemCount=[0]*len(behaviors)
 	while (len(eventList) < channels):
@@ -178,7 +176,7 @@ def makeEventList(behaviors):
 		if (itemCount[candidate] < 2):
 			eventList.append(random.randint(0,len(behaviors)-1))
 			itemCount[candidate] += 1
-	verbose(eventList)
+	debug(eventList)
 	return eventList
 
 #------------------------------------------------------------------------
