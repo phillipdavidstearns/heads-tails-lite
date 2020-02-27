@@ -25,6 +25,7 @@ behaviors=[]
 channelStates=[]
 eventTimes=[]
 eventStates=[]
+headlights=[]
 updateFlag=True
 resynchFlag=True
 refreshScoreFlag=True
@@ -82,6 +83,8 @@ def updateHeadlightTimes():
 		global headlightTimes
 		dim = headlights[date][0].split(':')
 		bright = headlights[date][1].split(':')
+		print(dim)
+		pring(bright)
 		headlightTimes[0]=int(dim[0])*3600+int(dim[1])*60
 		headlightTimes[1]=int(bright[0])*3600+int(bright[1])*60
 		verbose("[+] headlight times: " + headlightTimes)
@@ -181,8 +184,6 @@ def makeEventList(behaviors):
 #------------------------------------------------------------------------
 
 def interruptHandler(signal, frame):
-	print()
-	print("Interrupt (ID: {}) has been caught. Cleaning up...".format(signal))
 	shutdownIO()
 	os._exit(0)
 
@@ -191,6 +192,7 @@ def setup():
 	global eventStates
 	global channelStates
 	global behaviors
+	global headlights
 
 	# clear channel state and event queues
 	for i in range(channels):
@@ -204,7 +206,6 @@ def setup():
 	# resynch()
 	updateHeadlightTimes()
 	headlights = loadHeadlights()
-	print(headlights)
 
 def startupIO():
 	IO.init(pins, channels)
