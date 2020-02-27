@@ -39,7 +39,7 @@ def loadHeadlights():
 	with open( script_dir + "/data/headlights.csv",'rt') as f:
 
 		reader = csv.reader(f)
-		headlights= []
+		headlights= {}
 
 		for row in reader:
 			date=row[0]
