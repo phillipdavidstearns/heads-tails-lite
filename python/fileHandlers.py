@@ -5,7 +5,7 @@ script_dir = os.path.split(os.path.realpath(__file__))[0]
 
 verbose = False
 
-def verbose(string):
+def debug(string):
 	if verbose:
 		print(string)
 
@@ -19,17 +19,17 @@ def fetchHeadlights():
 	update = -1
 
 	try:
-		verbose("[*] Requesting 'headlights.csv' data from remote server")
+		debug("[*] Requesting 'headlights.csv' data from remote server")
 		update = os.system(cmd)
 	except:
-		verbose("[!] Couldn't update 'headlight.csv'")
+		debug("[!] Couldn't update 'headlight.csv'")
 		pass
 
 	if ( update == 0 ):
 		os.system("mv "+temp_filename+" "+filename)
-		verbose("[+] 'headlights.csv' successfully retrieved")
+		debug("[+] 'headlights.csv' successfully retrieved")
 	else:
-		verbose("[!] curl completed with a non-zero exit status")
+		debug("[!] curl completed with a non-zero exit status")
 		os.system('rm '+temp_filename+' 2>/dev/null')
 
 	return update
@@ -59,17 +59,17 @@ def fetchScore():
 	update = -1
 
 	try:
-		verbose("[*] Requesting 'score.csv' data from remote server")
+		debug("[*] Requesting 'score.csv' data from remote server")
 		update = os.system(cmd)
 	except:
-		verbose("[!] Couldn't update 'score.csv'")
+		debug("[!] Couldn't update 'score.csv'")
 		pass
 
 	if ( update == 0 ):
 		os.system("mv "+temp_filename+" "+filename)
-		verbose("[+] 'score.csv' successfully retrieved")
+		debug("[+] 'score.csv' successfully retrieved")
 	else:
-		verbose("[!] curl completed with a non-zero exit status")
+		debug("[!] curl completed with a non-zero exit status")
 		os.system('rm '+temp_filename+' 2>/dev/null')
 	return update
 
@@ -112,17 +112,17 @@ def fetchDeviation(debug=False):
 	cmd += ' "https://docs.google.com/spreadsheets/d/e/2PACX-1vTGp8GI85wmWP7yZaUa0EV_reKdn2yDFgRBotHnqVOfPKjek4_6JIy4lCnnp9xT9BZavKjeOy-ZYsn_/pub?gid=913901720&single=true&output=csv"'
 	update = -1
 	try:
-		verbose("[*] Requesting 'deviation.txt' data from remote server")
+		debug("[*] Requesting 'deviation.txt' data from remote server")
 		update = os.system(cmd)
 	except:
-		verbose("[!] Couldn't update 'deviation.txt'")
+		debug("[!] Couldn't update 'deviation.txt'")
 		pass
 	if ( update == 0 ):
 		os.system( 'mv ' + filename + ' ' + previous_filename )
 		os.system( 'mv ' +temp_filename+ ' ' + filename )
-		verbose("[+] 'deviation.txt' successfully retrieved")
+		debug("[+] 'deviation.txt' successfully retrieved")
 	else:
-		verbose("[!] curl completed with a non-zero exit status")
+		debug("[!] curl completed with a non-zero exit status")
 		os.system('rm '+temp_filename+' 2>/dev/null')
 	return update
 
