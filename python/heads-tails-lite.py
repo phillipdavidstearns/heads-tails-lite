@@ -271,7 +271,6 @@ def main():
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 signal.signal(signal.SIGHUP, interruptHandler)
-signal.signal(signal.SIGKILL, interruptHandler)
 
 setup()
 main()
