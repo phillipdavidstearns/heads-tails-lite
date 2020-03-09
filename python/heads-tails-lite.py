@@ -4,7 +4,6 @@
 # heads-tails-lite.py
 #
 # Refactoring of heads-tails.py
-# 1. 
 
 from fileHandlers import *
 import IO
@@ -32,7 +31,7 @@ refreshScoreFlag = True
 headlightFlag = True
 
 fps=30.0
-channels = 24 # number of output channels
+channels = 48 # number of output channels
 
 # Pin assignments
 
@@ -272,6 +271,7 @@ def main():
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
 signal.signal(signal.SIGHUP, interruptHandler)
+signal.signal(signal.SIGKILL, interruptHandler)
 
 setup()
 main()
