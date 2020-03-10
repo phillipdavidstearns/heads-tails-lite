@@ -64,7 +64,7 @@ def updateChannels():
 	debug("[+] Updating channels")
 	channelStates=[]
 	for c in range(channels):
-		channelStates.append[frameCount >> c & 1]
+		channelStates.append(frameCount >> c & 1)
 	debug(channelStates)
 	return channelStates
 
