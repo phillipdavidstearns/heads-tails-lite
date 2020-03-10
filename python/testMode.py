@@ -95,7 +95,7 @@ def main():
 		IO.update(updateChannels())
 		updateHeadlights()
 		frameCount += 1
-		time.sleep(0.5)
+		time.sleep(0.125)
 
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
