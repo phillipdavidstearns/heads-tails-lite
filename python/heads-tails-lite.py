@@ -240,7 +240,7 @@ def main():
 	while True:
 
 		currentTime = int(adjustedTime())
-
+		if(currentTime % 2 == 0): debug(currentTime)
 		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
 		if(refreshHeadlightTime == 0 and headlightFlag):
 			updateHeadlightTimes()
