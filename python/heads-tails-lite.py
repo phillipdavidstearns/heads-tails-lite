@@ -19,7 +19,7 @@ import argparse
 parser = argparse.ArgumentParser(description='heads-tails-lite')
 
 parser.add_argument('-v', dest='verbose', action='store_true',
-					default=False, type=bool,
+					default=False,
                     help='Verbose mode. Display debug messages')
 
 args = parser.parse_args()
