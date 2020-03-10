@@ -14,6 +14,14 @@ import time
 
 #------------------------------------------------------------------------
 
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("-v", "--verbose", dest="verbose", default=False,
+                  help="Display debug messages.")
+
+#(options, args) = parser.parse_args()
+
 verbose = False
 
 tzOffset = -5 * 3600 # timezone offset

@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 
 #------------------------------------------------------------------------
-# heads-tails-lite.py
-#
-# Refactoring of heads-tails.py
 
 from fileHandlers import *
 import IO
@@ -95,7 +92,7 @@ def main():
 		IO.update(updateChannels())
 		updateHeadlights()
 		frameCount += 1
-		time.sleep(0.125)
+		time.sleep(1/fps)
 
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
