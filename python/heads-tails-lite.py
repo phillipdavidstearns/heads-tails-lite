@@ -18,12 +18,16 @@ import argparse
 
 parser = argparse.ArgumentParser(description='heads-tails-lite')
 
+# create arguments
 parser.add_argument('-v', dest='verbose', action='store_true',
 					default=False,
                     help='Verbose mode. Display debug messages')
 
+# parse the args
 args = parser.parse_args()
-print(args)
+
+# store the argument values
+verbose=args.verbose
 
 if verbose:
 	print("Verbose mode. Displaying debug messeges")
@@ -41,6 +45,7 @@ updateFlag = True
 resynchFlag = True
 refreshScoreFlag = True
 headlightFlag = True
+maxRepeat = 3
 
 fps=30.0
 channels = 48 # number of output channels
@@ -110,7 +115,7 @@ def updateHeadlights():
 		IO.setPWM(BRIGHT) # dim
 
 #------------------------------------------------------------------------
-#	DEVIATION 
+#	DEVIATION
 #	>> NOT USED FOR FREE RUNNING MODE<<
 # 	* fetchDeviation()
 # 	* deviationChanged()
@@ -184,7 +189,7 @@ def makeEventList(behaviors):
 	itemCount=[0]*len(behaviors)
 	while (len(eventList) < channels):
 		candidate=random.randint(0,len(behaviors)-1)
-		if (itemCount[candidate] < 2):
+		if (itemCount[candidate] < maxRepeat):
 			eventList.append(random.randint(0,len(behaviors)-1))
 			itemCount[candidate] += 1
 	debug(eventList)
@@ -244,7 +249,7 @@ def main():
 	while True:
 
 		currentTime = int(adjustedTime())
-		if(currentTime % 2 == 0): debug(currentTime)
+#		if(currentTime % 2 == 0): debug(currentTime)
 
 		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
 		if(refreshHeadlightTime == 0 and headlightFlag):
