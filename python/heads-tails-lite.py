@@ -14,13 +14,16 @@ import time
 
 #------------------------------------------------------------------------
 
-from optparse import OptionParser
+import argparse
 
-parser = OptionParser()
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                  help="Display debug messages.")
+parser = argparse.ArgumentParser(description='heads-tails-lite')
 
-#(options, args) = parser.parse_args()
+parser.add_argument('-v', dest='verbose', action='store_true',
+					default=False, type=bool,
+                    help='Verbose mode. Display debug messages')
+
+args = parser.parse_args()
+print args.accumulate(args.integers)
 
 if verbose:
 	print("Verbose mode. Displaying debug messeges")
