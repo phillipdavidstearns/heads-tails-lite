@@ -17,12 +17,10 @@ import time
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option("-v", "--verbose", dest="verbose", default=False,
+parser.add_option("-v", "--verbose", action="store_false", dest="verbose", default=True,
                   help="Display debug messages.")
 
 #(options, args) = parser.parse_args()
-
-verbose = False
 
 if verbose:
 	print("Verbose mode. Displaying debug messeges")
