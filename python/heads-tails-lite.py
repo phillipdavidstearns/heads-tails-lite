@@ -23,7 +23,7 @@ parser.add_argument('-v', dest='verbose', action='store_true',
                     help='Verbose mode. Display debug messages')
 
 args = parser.parse_args()
-print(args.accumulate(args.integers))
+print(args)
 
 if verbose:
 	print("Verbose mode. Displaying debug messeges")
