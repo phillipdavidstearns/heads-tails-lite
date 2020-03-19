@@ -6,7 +6,7 @@ from fileHandlers import *
 import IO
 import signal
 import os
-import random
+from random import randint
 import time
 from math import sin, pow, pi
 
@@ -14,8 +14,9 @@ from math import sin, pow, pi
 
 verbose = False
 
-fps=30.0
+fps=15.0
 frameCount=0
+period=100.0
 channels = 48 # number of output channels
 
 # Pin assignments
@@ -55,13 +56,14 @@ def debug(message):
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights():
 	debug("[+] Setting headlight brightness")
-	IO.setPWM(pow(sin(2*pi*frameCount/1000), 2)) # dim
+	IO.setPWM(pow(sin(2*pi*frameCount/period), 2)) # dim
 
 def updateChannels():
 	debug("[+] Updating channels")
 	channelStates=[]
 	for c in range(channels):
-		channelStates.append(frameCount >> c & 1)
+#		channelStates.append(frameCount >> c % 8 & 1)
+		channelStates.append(randint(0,1))
 	debug(channelStates)
 	return channelStates
 
