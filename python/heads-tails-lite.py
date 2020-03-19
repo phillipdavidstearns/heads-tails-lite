@@ -286,9 +286,7 @@ def main():
 		updateHeadlights()
 		time.sleep(1/fps)
 
-signal.signal(signal.SIGINT, interruptHandler)
-signal.signal(signal.SIGTERM, interruptHandler)
-signal.signal(signal.SIGHUP, interruptHandler)
+ls
 
 setup()
 main()
