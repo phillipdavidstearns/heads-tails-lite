@@ -247,33 +247,16 @@ def main():
 	global behaviors
 
 	while True:
-
+		
 		currentTime = int(adjustedTime())
-#		if(currentTime % 2 == 0): debug(currentTime)
 
 		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
 		if(refreshHeadlightTime == 0 and headlightFlag):
 			updateHeadlightTimes()
+			updateHeadlights()
 			headlightFlag = False
 		elif(refreshHeadlightTime != 0 and not headlightFlag):
 			headlightFlag = True
-
-		# resynchTime = currentTime % 3600 # triggers every hour
-		# if(resynchTime == 0 and resynchFlag):
-		# 	resynch()
-		# 	resynchFlag = False
-		# elif(resynchTime != 0 and not resynchFlag):
-		# 	resynchFlag = True
-
-		# refreshScoreTime = currentTime  % 1800 # triggers every 1/2 hour
-		# if(refreshScoreTime == 0 and refreshScoreFlag):
-		# 	verbose("Fetching score")
-		# 	if fetchScore():
-		# 		behaviors = loadScore()
-		# 		verbose(behaviors)
-		# 	refreshScoreFlag = False
-		# elif(refreshScoreTime != 0 and not refreshScoreFlag):
-		# 	refreshScoreFlag = True
 
 		cycleTime = currentTime % 90
 		if(cycleTime == 0 and updateFlag):
@@ -283,8 +266,10 @@ def main():
 			updateFlag = True
 
 		IO.update(updateChannels())
-		updateHeadlights()
 		time.sleep(1/fps)
+
+signal.signal(signal.SIGINT, interruptHandler)
+signal.signal(signal.SIGTERM, interruptHandler)
 
 setup()
 main()
