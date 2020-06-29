@@ -286,7 +286,5 @@ def main():
 		updateHeadlights()
 		time.sleep(1/fps)
 
-ls
-
 setup()
 main()
