@@ -253,10 +253,11 @@ def main():
 		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
 		if(refreshHeadlightTime == 0 and headlightFlag):
 			updateHeadlightTimes()
-			updateHeadlights()
 			headlightFlag = False
 		elif(refreshHeadlightTime != 0 and not headlightFlag):
 			headlightFlag = True
+
+		updateHeadlights()
 
 		cycleTime = currentTime % 90
 		if(cycleTime == 0 and updateFlag):
