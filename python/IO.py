@@ -74,7 +74,10 @@ def init(pins, channels):
 		GPIO.setup(pin, GPIO.IN)
 
 def setPWM(brightness):
-	PWM.hardware_PWM(PWM_PIN, PWM_FREQ, int(brightness*1000000.0))
+	try:
+		PWM.hardware_PWM(PWM_PIN, PWM_FREQ, int(brightness*1000000.0))
+	except Exception as e:
+		print(e)
 
 def attachInterrupt(pin, mode, callback): 
 	if (mode == "falling" or mode == "FALLING"):

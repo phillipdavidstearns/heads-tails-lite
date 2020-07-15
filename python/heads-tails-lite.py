@@ -32,7 +32,7 @@ verbose=args.verbose
 if verbose:
 	print("Verbose mode. Displaying debug messeges")
 
-tzOffset = -5 * 3600 # timezone offset
+tzOffset = -8 * 3600 # timezone offset
 dotOffset = 0 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
 deviation = 0
 power_line_time = time.time()
@@ -87,7 +87,7 @@ def debug(message):
 headlightTimes=[ 25200, 68400 ] # default sunrise/sunset times
 headlightState=0 # 0 for dim 1 for bright
 lastHeadlightState=0 # 0 for dim 1 for bright
-DIM = 0.15
+DIM = 0.5
 BRIGHT = 1.0
 
 # fetch the current date and set headlight timings accordingly
