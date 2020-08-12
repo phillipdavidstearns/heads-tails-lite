@@ -6,7 +6,7 @@ import signal
 
 count=0
 fps=30.0
-channels = 8 # number of output channels
+channels = 32 # number of output channels
 
 # Pin assignments
 

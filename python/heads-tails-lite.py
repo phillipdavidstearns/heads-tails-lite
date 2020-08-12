@@ -32,10 +32,6 @@ verbose=args.verbose
 if verbose:
 	print("Verbose mode. Displaying debug messeges")
 
-tzOffset = -8 * 3600 # timezone offset
-dotOffset = 0 # based on the start of Phase B @ 51 seconds in the cycle starting + 28 past midnight
-deviation = 0
-power_line_time = time.time()
 behaviors = []
 channelStates = []
 eventTimes = []
@@ -48,7 +44,7 @@ headlightFlag = True
 maxRepeat = 3
 
 fps=30.0
-channels = 48 # number of output channels
+channels = 32 # number of output channels
 
 # Pin assignments
 
@@ -84,26 +80,11 @@ def debug(message):
 #		* loadHeadlights()
 
 # Some global variables related to headlights
-headlightTimes=[ 25200, 68400 ] # default sunrise/sunset times
+headlightTimes=[ 25200, 68400 ] # default sunrise/sunset times of 7am 7pm
 headlightState=0 # 0 for dim 1 for bright
 lastHeadlightState=0 # 0 for dim 1 for bright
 DIM = 0.5
 BRIGHT = 1.0
-
-# fetch the current date and set headlight timings accordingly
-def updateHeadlightTimes():
-	debug("[+] Updating headlight timings")
-	date=str(time.localtime()[1])+'/'+str(time.localtime()[2])
-	debug(date)
-	try: # if the date is accounted for, we good
-		global headlightTimes
-		dim = headlights[date][0].split(':')
-		bright = headlights[date][1].split(':')
-		headlightTimes[0]=int(dim[0])*3600+int(dim[1])*60
-		headlightTimes[1]=int(bright[0])*3600+int(bright[1])*60
-		debug("[+] headlight times: " + headlightTimes)
-	except: # otherwise we go with the defaults or last used
-		pass
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights():
@@ -115,28 +96,11 @@ def updateHeadlights():
 		IO.setPWM(BRIGHT) # dim
 
 #------------------------------------------------------------------------
-#	DEVIATION
-#	>> NOT USED FOR FREE RUNNING MODE<<
-# 	* fetchDeviation()
-# 	* deviationChanged()
-# 	* loadDeviation()
-
-def resynch():
-	debug("[+] Updating deviation amount")
-	global power_line_time
-	global deviation
-	if fetchDeviation():
-		if deviationChanged():
-			deviation = loadDeviation()
-			power_line_time=time.time()
-
-#------------------------------------------------------------------------
 # TIMING
 
 # Provides a reading of time that should be synched to the grid
 def adjustedTime():
-	# return power_line_time + tzOffset + dotOffset + deviation
-	return time.time() + tzOffset + dotOffset + deviation
+	return time.time() + time.localtime().tm_gmtoff
 
 #------------------------------------------------------------------------
 
@@ -215,10 +179,8 @@ def setup():
 		channelStates.append(0)
 
 	startupIO()
-	# fetchScore() # check that the current score is present in ./data/
+
 	behaviors = loadScore()
-	# resynch()
-	updateHeadlightTimes()
 	headlights = loadHeadlights()
 
 def startupIO():
@@ -233,29 +195,16 @@ def shutdownIO():
 
 def main():
 
+	global behaviors
 	global eventTimes
 	global eventStates
 	global channelStates
 	global lastCycleTime
-	global power_line_time
-
 	global updateFlag
-	global resynchFlag
-	global refreshScoreFlag
-	global headlightFlag
-
-	global behaviors
 
 	while True:
 		
 		currentTime = int(adjustedTime())
-
-		refreshHeadlightTime = (currentTime - 3600) % 86400 # 86400 should trigger at ~1AM
-		if(refreshHeadlightTime == 0 and headlightFlag):
-			updateHeadlightTimes()
-			headlightFlag = False
-		elif(refreshHeadlightTime != 0 and not headlightFlag):
-			headlightFlag = True
 
 		updateHeadlights()
 
