@@ -14,10 +14,11 @@ from math import sin, pow, pi
 
 verbose = False
 
-fps=15.0
+fps=1.0
 frameCount=0
-period=100.0
-channels = 48 # number of output channels
+rate=0.01
+angle=0
+channels = 32 # number of output channels
 
 # Pin assignments
 
@@ -54,16 +55,18 @@ def debug(message):
 
 
 # check what time it is and dijust headlight brightnesss accordingly
-def updateHeadlights():
+def updateHeadlights(angle):
 	debug("[+] Setting headlight brightness")
-	IO.setPWM(pow(sin(2*pi*frameCount/period), 2)) # dim
+	IO.setPWM(pow(sin(2*pi*angle), 2)) # dim
 
-def updateChannels():
+def updateChannels(channel):
 	debug("[+] Updating channels")
 	channelStates=[]
 	for c in range(channels):
-#		channelStates.append(frameCount >> c % 8 & 1)
-		channelStates.append(randint(0,1))
+		if c == channel: 
+			channelStates.append(1)
+		else:
+			channelStates.append(0)
 	debug(channelStates)
 	return channelStates
 
@@ -89,12 +92,15 @@ def shutdownIO():
 def main():
 
 	global frameCount
+	global angle
 
 	while True:
-		IO.update(updateChannels())
-		updateHeadlights()
+		IO.update(updateChannels( framecount % channels ))
 		frameCount += 1
-		time.sleep(1/fps)
+		updateHeadlights(angle)
+		angle += rate;
+		angle = ( angle % 1 ) + 1
+		time.sleep( 1 / fps )
 
 signal.signal(signal.SIGINT, interruptHandler)
 signal.signal(signal.SIGTERM, interruptHandler)
