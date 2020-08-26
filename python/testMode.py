@@ -56,8 +56,9 @@ def debug(message):
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights(angle):
-	debug("[+] Setting headlight brightness")
-	IO.setPWM(pow(sin(2*pi*angle), 2)) # dim
+	brightness=pow(sin(2*pi*angle), 2)
+	debug("[+] Setting headlight brightness to: "+str(brightness))
+	IO.setPWM(brightness) # dim
 
 def updateChannels(channel):
 	debug("[+] Updating channels")
