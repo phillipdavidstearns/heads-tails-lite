@@ -12,7 +12,7 @@ from math import sin, pow, pi
 
 #------------------------------------------------------------------------
 
-verbose = False
+verbose = True
 
 fps=1.0
 frameCount=0
@@ -95,7 +95,7 @@ def main():
 	global angle
 
 	while True:
-		IO.update(updateChannels( framecount % channels ))
+		IO.update(updateChannels( frameCount % channels ))
 		frameCount += 1
 		updateHeadlights(angle)
 		angle += rate;
