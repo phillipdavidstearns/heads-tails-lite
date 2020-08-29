@@ -53,3 +53,15 @@ Python code to run lighting control on a Raspberry Pi:
    CGroup: /system.slice/pigpiod.service
            └─5641 /usr/bin/pigpiod -g
 ```
+
+## Testing Hardware
+
+To aid in debugging issues with the hardware, the `testMode.py` script sequenctially lights headlight driver boards as well as dims and brightens the headlights.
+
+### Using `testMode.py` as user `heads-tails`
+
+1. `cd ~`
+1. Stop `heads-tails-lite.service`: `sudo systemctl stop heads-tails-lite`
+1. Run the script: `sudo python3 heads-tails-lite/python/testMode.py`
+1. To stop, press `ctrl+c`.
+1. Restart `heads-tails-lite.service`: `sudo systemctl start heads-tails-lite`
