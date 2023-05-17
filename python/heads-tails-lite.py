@@ -56,7 +56,7 @@ enable = 23 # IOister enable GPIO pin
 
 # pwm
 pwm_pin = 12 # pwm pin
-pwm_freq = 14000
+pwm_freq = 10000
 pwm_brightness = 0
 
 # make composite lists to pass along to IO
