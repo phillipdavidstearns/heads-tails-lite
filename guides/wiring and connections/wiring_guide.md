@@ -37,14 +37,18 @@ Start with all power supplies disconnected from 110-240VAC.
 
 * Wire up the 12V DC power supply with an appropriate cable to supply 110-240AC.
 
+### Secure boards to the project housing or a rigid backing material.
+
 ![](pi_housing.png)
 
-1. Secure boards to the project housing or a rigid backing material.
-	* [Remove the housing for the Raspberry Pi Zero W](./pi_housing.png)
+* Remove the housing for the Raspberry Pi Zero W.
+* Use machine screws to secure the board and replace cover.
+
+### Connect Raspberry Pi Zero W to the Shift Register board.
 
 ![](20x10_connection_diagram.png)
 
-1. Connect Raspberry Pi Zero W to the Shift Register board. [Refer to the connection diagram photoshop diagrams](./20x10_connection_diagram.psd). Pins are indicated and labelled using layer names. Sections are grouped and visibility can be toggled for clarity.
+1. Pins are indicated and labelled using layer names. Sections are grouped and visibility can be toggled for clarity.
 	* GND
 	* +5V
 	* STROBE
