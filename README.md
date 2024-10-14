@@ -145,8 +145,8 @@ To aid in debugging issues with the hardware, the `test.py` script sequenctially
 
 ### Using `test.py` as user `heads-tails`
 
-1. `cd ~`
-1. Stop `heads-tails-lite.service`: `sudo systemctl stop heads-tails-lite`
-1. Run the script: `sudo python3 heads-tails-lite/python/test.py`
+1. Run: `cd`
+1. Stop `heads-tails-lite.service` by running: `sudo systemctl stop heads-tails-lite`
+1. Run the script: `sudo python3 heads-tails-lite/src/test.py`
 1. To stop, press `ctrl+c`.
 1. Restart `heads-tails-lite.service`: `sudo systemctl start heads-tails-lite`

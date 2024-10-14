@@ -85,10 +85,17 @@ def debug(message):
 #		* loadHeadlights()
 
 # Some global variables related to headlights
+<<<<<<< HEAD:src/heads-tails-lite.py
 headlightTimes = [ 25200, 68400 ] # default sunrise/sunset times of 7am 7pm
 headlightState = 0 # 0 for dim 1 for bright
 lastHeadlightState = 0 # 0 for dim 1 for bright
 DIM = 0.5
+=======
+headlightTimes=[ 25200, 68400 ] # default sunrise/sunset times of 7am 7pm
+headlightState=0 # 0 for dim 1 for bright
+lastHeadlightState=0 # 0 for dim 1 for bright
+DIM = 0.975
+>>>>>>> 3d084f757dfb477415060a823614de81b8e18c3f:python/heads-tails-lite.py
 BRIGHT = 1.0
 
 # check what time it is and dijust headlight brightnesss accordingly
