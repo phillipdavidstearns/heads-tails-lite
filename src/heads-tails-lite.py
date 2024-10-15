@@ -112,9 +112,10 @@ def makeEventList():
 #----------------------------------------------------------------
 
 def interruptHandler(signal, frame):
+  os._exit(0)
   logging.info(f"interruptHandler - caught signal: {signal}, frame: {frame}")
   shutdownIO()
-  os._exit(0)
+  
 
 #----------------------------------------------------------------
 
