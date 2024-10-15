@@ -51,7 +51,7 @@ def updateEvents():
     logging.debug(f"eventTimes[{c}]: {eventTimes[c]}\neventStates[{c}]: {eventStates[c]}")
     eventTimes[c] += times
     eventStates[c] += states
-  logging.debug(f"updateEvents():\neventTimes: {repr(len(eventTimes))}\neventStates: {repr(len(eventStates))}")
+    logging.debug(f"updateEvents():\neventTimes[{c}]: {repr(eventTimes[c])}\neventStates[{c}]: {repr(eventStates[c])}")
 
 #------------------------------------------------------------------------
 
@@ -88,7 +88,7 @@ def generateTimings(behavior):
     else:
       states.append(0)
 
-  logging.debug(f"generateTimings():\nbehavior: {repr(behavior)}\ntimes: {repr(len(times))}\nstates: {repr(len(states))}")
+  logging.debug(f"generateTimings():\nbehavior: {repr(behavior)}\ntimes: {repr(times)}\nstates: {repr(states)}")
 
   return times, states
 
