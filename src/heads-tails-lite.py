@@ -214,6 +214,7 @@ if __name__ == "__main__":
 
   try:
     behaviors = loadScore()
+    exit()
   except Exception as e:
     logging.error(f"Failed to load behaviors from loadScore: {repr(e)}")
     os._exit(0)
