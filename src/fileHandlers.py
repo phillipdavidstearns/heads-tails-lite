@@ -31,5 +31,5 @@ def loadScore():
               variations.append(temp)
             index += 1
       behaviors.append([times, variations, offset_variation])
-      loggging.debug(f"behaviors: {behaviors}")
+      logging.debug(f"behaviors: {behaviors}")
   return behaviors
