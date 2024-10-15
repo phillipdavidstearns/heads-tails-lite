@@ -6,6 +6,7 @@
 
 import RPi.GPIO as GPIO
 import pigpio
+import logging
 
 STROBE=-1
 DATA=-1
@@ -38,7 +39,7 @@ def init(pins, channels):
 
   PWM = pigpio.pi()
   if not PWM.connected:
-    exit()
+    raise Exception("Could not make contact with pigpio. Instance of pigpio.pi() did not connect to pigiod daemon.")
 
   PWM_PIN=pins[2][0]
   PWM_FREQ=pins[2][1]
@@ -61,12 +62,10 @@ def init(pins, channels):
   CHANNELS=channels
 
   if STROBE == -1 or DATA == -1 or CLOCK == -1 or ENABLE == -1:
-    print("Registers require 4 GPIO pins: strobe, data, clock, and enable")
-    return
+    raise Exception("Registers require 4 GPIO pins: strobe, data, clock, and enable")
 
   if CHANNELS == -1:
-    print("Number of channels must be greater than 0")
-    return
+    raise Exception("Number of channels must be greater than 0")
 
   for pin in pins[0]:
     GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
@@ -74,10 +73,7 @@ def init(pins, channels):
     GPIO.setup(pin, GPIO.IN)
 
 def setPWM(brightness):
-  try:
-    PWM.hardware_PWM(PWM_PIN, PWM_FREQ, int(brightness*1000000.0))
-  except Exception as e:
-    print(e)
+  PWM.hardware_PWM(PWM_PIN, PWM_FREQ, int(brightness * 1000000.0))
 
 def attachInterrupt(pin, mode, callback): 
   if (mode == "falling" or mode == "FALLING"):
@@ -87,7 +83,7 @@ def attachInterrupt(pin, mode, callback):
   elif (mode == "both" or mode == "BOTH" or mode == "change" or mode == "CHANGE"):
     event = GPIO.BOTH
   else:
-    print("mode not recognized: "+str(mode))
+    logging.warning(f"attachInterrupt(): mode {str(mode)} not recognized.")
     return
   GPIO.add_event_detect(pin, event)
   GPIO.add_event_callback(pin, callback)

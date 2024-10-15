@@ -13,14 +13,7 @@ import random
 import time
 from datetime import datetime
 import argparse
-
 import logging
-
-#------------------------------------------------------------------------
-# verbose or debug mode
-
-def debug(message):
-  if verbose: print(message)
 
 #------------------------------------------------------------------------
 # HEADLIGHTS
@@ -32,11 +25,12 @@ BRIGHT = 1.0
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights():
-  debug("[+] Setting headlight brightness")
   currentTime = adjustedTime() % 86400
   if ( currentTime >= headlightTimes[0] and currentTime < headlightTimes[1] ):
+    logging.debug(f"Setting headlight brightness to DIM: {DIM} at: {currentTime}")
     IO.setPWM(DIM) # dim
   else:
+    logging.debug(f"Setting headlight brightness to BRIGHT: {BRIGHT} at: {currentTime}")
     IO.setPWM(BRIGHT) # dim
 
 #------------------------------------------------------------------------
@@ -49,7 +43,7 @@ def adjustedTime():
 #------------------------------------------------------------------------
 
 def updateEvents():
-  debug("[+] Updating behavior events")
+  logging.info("Updating behavior events.")
   global eventTimes
   global eventStates
   eventList = makeEventList()
@@ -57,30 +51,35 @@ def updateEvents():
     times, states = generateTimings(behaviors[eventList[c]])
     eventTimes[c] += times
     eventStates[c] += states
-  debug([eventTimes, eventStates])
+  logging.debug(f"eventTimes: {repr(eventTimes)}\neventStates: {repr(eventStates)}")
 
 #------------------------------------------------------------------------
 
 def updateChannels():
-  debug("[+] Updating channels")
+  logging.info("Updating channels")
   global eventTimes
   global eventStates
   global channelStates
   for c in range(channels):
-    if eventTimes[c]:
-      if (adjustedTime() >= eventTimes[c][0]):
-        channelStates[c] = eventStates[c][0]
-        eventStates[c] = eventStates[c][1:] # remove from queue
-        eventTimes[c] = eventTimes[c][1:] # remove from queue
-        if (len(eventTimes[c]) == 0):
-          channelStates[c] = 0
-  debug(channelStates)
+    if not eventTimes[c]:
+      continue
+
+    if (adjustedTime() >= eventTimes[c][0]):
+      channelStates[c] = eventStates[c][0]
+      eventStates[c] = eventStates[c][1:] # remove from queue
+      eventTimes[c] = eventTimes[c][1:] # remove from queue
+      if (len(eventTimes[c]) == 0):
+        channelStates[c] = 0
+
+  logging.debug(f"channelStates: {repr(channelStates)}")
+
   return channelStates
 
 #------------------------------------------------------------------------
 
 def generateTimings(behavior):
-  debug("[+] Generate timings")
+  logging.info("Generating timings")
+  logging.debug(f"behavior: {repr(behavior)}")
   times = []
   states = []
   offset = random.uniform(-behavior[2], behavior[2])
@@ -94,14 +93,14 @@ def generateTimings(behavior):
     else:
       states.append(0)
 
-  debug(times, states)
+  logging.debug(f"times: {repr(times)}\nstates: {repr(states)}")
 
   return (times, states)
 
 #------------------------------------------------------------------------
 
 def makeEventList():
-  debug("[+] Making behavior event list")
+  logging.info("Making behavior event list")
   eventList = []
   itemCount = [0] * len(behaviors)
 
@@ -111,19 +110,21 @@ def makeEventList():
       eventList.append(random.randint(0, len(behaviors) - 1))
       itemCount[candidate] += 1
 
-  debug(eventList)
+  logging.debug(f"eventList: {repr(eventList)}")
 
   return eventList
 
 #----------------------------------------------------------------
 
 def interruptHandler(signal, frame):
+  logging.info(f"interruptHandler - caught signal: {signal}, frame: {frame}")
   shutdownIO()
   os._exit(0)
 
 #----------------------------------------------------------------
 
 def startupIO():
+  logging.info(f"Starting up IO")
 
   # outputs
   strobe = 17 # latch strobe GPIO pin
@@ -150,6 +151,7 @@ def startupIO():
 #----------------------------------------------------------------
 
 def shutdownIO():
+  logging.info(f"Shutting down IO")
   IO.disable()
   IO.clear()
   IO.cleanup()
@@ -161,7 +163,7 @@ def main():
   updateFlag = True
 
   while True:
-    
+
     updateHeadlights()
 
     cycleTime = adjustedTime() % 90
@@ -179,37 +181,53 @@ def main():
 if __name__ == "__main__":
   signal.signal(signal.SIGINT, interruptHandler)
   signal.signal(signal.SIGTERM, interruptHandler)
+  signal.signal(signal.SIGHUP, interruptHandler)
 
   parser = argparse.ArgumentParser(description='heads-tails-lite')
 
   # create arguments
   parser.add_argument(
-    '-v',
-    dest='verbose',
-    action='store_true',
-    default=False,
-    help='Verbose mode. Display debug messages'
+    '-l',
+    dest='log_level',
+    default=20,
+    choices=[0, 10, 20, 30, 40, 50],
+    type=int,
+    help='log levels: 0=NOTSET 10=DEBUG, 20=INFO, 30=WARNING, 40=ERROR, 50=CRITICAL'
   )
 
   # parse the args
   args = parser.parse_args()
 
-  # store the argument values
-  verbose = args.verbose
-  debug("Verbose mode. Displaying debug messages")
+  logging.basicConfig(
+    level=args.log_level,
+    format='[HEADS-TAILS-LITE] - %(levelname)s | %(message)s'
+  )
 
   max_repeat = 3
   fps = 30.0
   channels = 32 # number of output channels
 
-  startupIO()
+  try:
+    startupIO()
+  except Exception as e:
+    logging.error(f"Failed to start up IO: {repr(e)}")
+    os._exit(0)
 
   eventTimes = [[]] * channels
   eventStates = [[]] * channels
   channelStates = [0] * channels
 
-  behaviors = loadScore()
+  try:
+    behaviors = loadScore()
+  except Exception as e:
+    logging.error(f"Failed to load behaviors from loadScore: {repr(e)}")
+    os._exit(0)
 
   updateEvents()
 
-  main()
+  try:
+    main()
+  except Exception as e:
+    logging.error(f"While executing main(): {repr(e)}")
+  finally
+    os._exit(0)
