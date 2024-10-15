@@ -219,6 +219,7 @@ if __name__ == "__main__":
     os._exit(0)
 
   updateEvents()
+  exit()
 
   try:
     main()
