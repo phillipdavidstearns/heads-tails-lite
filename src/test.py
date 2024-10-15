@@ -2,7 +2,6 @@
 
 #------------------------------------------------------------------------
 
-from fileHandlers import *
 import IO
 import signal
 import os
@@ -49,10 +48,6 @@ def debug(message):
 
 #------------------------------------------------------------------------
 #	HEADLIGHTS
-#	updating of the actual headlight timetables is done using functions in fileHandlers.py
-#		* fetchHeadlights()
-#		* loadHeadlights()
-
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights(angle):
@@ -62,12 +57,8 @@ def updateHeadlights(angle):
 
 def updateChannels(channel):
 	debug("[+] Updating channels")
-	channelStates=[]
-	for c in range(channels):
-		if c == channel: 
-			channelStates.append(1)
-		else:
-			channelStates.append(0)
+	channelStates = [0] * channels
+	channelStates[channel] = 1
 	debug(channelStates)
 	return channelStates
 
