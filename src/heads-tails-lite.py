@@ -47,12 +47,9 @@ def updateEvents():
   global eventStates
   eventList = makeEventList()
   for c in range(channels):
-    logging.debug("================================================================")
     times, states = generateTimings(behaviors[eventList[c]])
-    logging.debug(f"eventTimes[{c}]: {eventTimes[c]}\neventStates[{c}]: {eventStates[c]}")
     eventTimes[c] += times
     eventStates[c] += states
-    logging.debug(f"updateEvents():\neventTimes[{c}]: {repr(eventTimes[c])}\neventStates[{c}]: {repr(eventStates[c])}")
 
 #------------------------------------------------------------------------
 
@@ -62,7 +59,7 @@ def updateChannels():
   global channelStates
   for c in range(channels):
     if eventTimes[c]:
-      if (adjustedTime() >= eventTimes[c][0]):
+      if (adjustedTime() > eventTimes[c][0]):
         channelStates[c] = eventStates[c][0]
         eventStates[c] = eventStates[c][1:] # remove from queue
         eventTimes[c] = eventTimes[c][1:] # remove from queue
@@ -112,9 +109,9 @@ def makeEventList():
 #----------------------------------------------------------------
 
 def interruptHandler(signal, frame):
-  os._exit(0)
   logging.info(f"interruptHandler - caught signal: {signal}, frame: {frame}")
   shutdownIO()
+  os._exit(0)
   
 
 #----------------------------------------------------------------
@@ -185,7 +182,7 @@ if __name__ == "__main__":
   parser.add_argument(
     '-l',
     dest='log_level',
-    default=10,
+    default=20,
     choices=[0, 10, 20, 30, 40, 50],
     type=int,
     help='log levels: 0=NOTSET 10=DEBUG, 20=INFO, 30=WARNING, 40=ERROR, 50=CRITICAL'
@@ -222,8 +219,6 @@ if __name__ == "__main__":
   except Exception as e:
     logging.error(f"Failed to load behaviors from loadScore: {repr(e)}")
     os._exit(0)
-
-  updateEvents()
 
   try:
     main()
