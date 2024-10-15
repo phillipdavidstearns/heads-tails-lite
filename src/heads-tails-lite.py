@@ -43,20 +43,18 @@ def adjustedTime():
 #------------------------------------------------------------------------
 
 def updateEvents():
-  logging.info("Updating behavior events.")
   global eventTimes
   global eventStates
   eventList = makeEventList()
   for c in range(channels):
     times, states = generateTimings(behaviors[eventList[c]])
-    eventTimes[c].append(times)
-    eventStates[c].append(states)
-  logging.debug(f"eventTimes: {repr(eventTimes)}\neventStates: {repr(eventStates)}")
+    eventTimes[c] += times
+    eventStates[c] += states
+  logging.debug(f"updateEvents():\neventTimes: {repr(eventTimes)}\neventStates: {repr(eventStates)}")
 
 #------------------------------------------------------------------------
 
 def updateChannels():
-  logging.info("Updating channels")
   global eventTimes
   global eventStates
   global channelStates
@@ -78,8 +76,6 @@ def updateChannels():
 #------------------------------------------------------------------------
 
 def generateTimings(behavior):
-  logging.info("Generating timings")
-  logging.debug(f"behavior: {repr(behavior)}")
   times = []
   states = []
   offset = random.uniform(-behavior[2], behavior[2])
@@ -93,14 +89,13 @@ def generateTimings(behavior):
     else:
       states.append(0)
 
-  logging.debug(f"times: {repr(times)}\nstates: {repr(states)}")
+  logging.debug(f"generateTimings():\nbehavior: {repr(behavior)}\ntimes: {repr(times)}\nstates: {repr(states)}")
 
   return (times, states)
 
 #------------------------------------------------------------------------
 
 def makeEventList():
-  logging.info("Making behavior event list")
   eventList = []
   itemCount = [0] * len(behaviors)
 
@@ -110,7 +105,7 @@ def makeEventList():
       eventList.append(random.randint(0, len(behaviors) - 1))
       itemCount[candidate] += 1
 
-  logging.debug(f"eventList: {repr(eventList)}")
+  logging.debug(f"makeEventList() - eventList: {repr(eventList)}")
 
   return eventList
 
@@ -189,7 +184,7 @@ if __name__ == "__main__":
   parser.add_argument(
     '-l',
     dest='log_level',
-    default=20,
+    default=10,
     choices=[0, 10, 20, 30, 40, 50],
     type=int,
     help='log levels: 0=NOTSET 10=DEBUG, 20=INFO, 30=WARNING, 40=ERROR, 50=CRITICAL'
