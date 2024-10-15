@@ -47,6 +47,7 @@ def updateEvents():
   global eventStates
   eventList = makeEventList()
   for c in range(channels):
+    logging.debug("================================================================")
     times, states = generateTimings(behaviors[eventList[c]])
     logging.debug(f"eventTimes[{c}]: {eventTimes[c]}\neventStates[{c}]: {eventStates[c]}")
     eventTimes[c] += times
