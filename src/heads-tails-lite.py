@@ -25,20 +25,20 @@ BRIGHT = 1.0
 
 # check what time it is and dijust headlight brightnesss accordingly
 def updateHeadlights():
-  currentTime = adjustedTime() % 86400
+  timedelta = datetime.now(UTC).replace(tzinfo=None) - datetime.now()
+  difference = timedelta.seconds + timedelta.microseconds * 0.000001
+  currentTime = adjustedTime() % 86400 - difference
   if ( currentTime >= headlightTimes[0] and currentTime < headlightTimes[1] ):
-    logging.debug(f"Setting headlight brightness to DIM: {DIM} at: {currentTime}")
-    IO.setPWM(DIM) # dim
+    IO.setPWM(DIM)
   else:
-    logging.debug(f"Setting headlight brightness to BRIGHT: {BRIGHT} at: {currentTime}")
-    IO.setPWM(BRIGHT) # dim
+    IO.setPWM(BRIGHT)
 
 #------------------------------------------------------------------------
 # TIMING
 
 # Provides a reading of time that should be synched to the grid
 def adjustedTime():
-  return int(datetime.now().timestamp())
+  return datetime.now().timestamp()
 
 #------------------------------------------------------------------------
 
@@ -59,15 +59,13 @@ def updateChannels():
   global eventStates
   global channelStates
   for c in range(channels):
-    if not eventTimes[c]:
-      continue
-
-    if (adjustedTime() >= eventTimes[c][0]):
-      channelStates[c] = eventStates[c][0]
-      eventStates[c] = eventStates[c][1:] # remove from queue
-      eventTimes[c] = eventTimes[c][1:] # remove from queue
-      if (len(eventTimes[c]) == 0):
-        channelStates[c] = 0
+    if eventTimes[c]:
+      if (adjustedTime() > eventTimes[c][0]):
+        channelStates[c] = eventStates[c][0]
+        eventStates[c] = eventStates[c][1:] # remove from queue
+        eventTimes[c] = eventTimes[c][1:] # remove from queue
+        if (len(eventTimes[c]) == 0):
+          channelStates[c] = 0
 
   logging.debug(f"channelStates: {repr(channelStates)}")
 
@@ -91,7 +89,7 @@ def generateTimings(behavior):
 
   logging.debug(f"generateTimings():\nbehavior: {repr(behavior)}\ntimes: {repr(times)}\nstates: {repr(states)}")
 
-  return (times, states)
+  return times, states
 
 #------------------------------------------------------------------------
 
@@ -102,7 +100,7 @@ def makeEventList():
   while (len(eventList) < channels):
     candidate = random.randint(0, len(behaviors) - 1)
     if (itemCount[candidate] < max_repeat):
-      eventList.append(random.randint(0, len(behaviors) - 1))
+      eventList.append(candidate)
       itemCount[candidate] += 1
 
   logging.debug(f"makeEventList() - eventList: {repr(eventList)}")
@@ -161,7 +159,7 @@ def main():
 
     updateHeadlights()
 
-    cycleTime = adjustedTime() % 90
+    cycleTime = int(adjustedTime()) % 90
     if(cycleTime == 0 and updateFlag):
       updateEvents()
       updateFlag = False
@@ -214,7 +212,6 @@ if __name__ == "__main__":
 
   try:
     behaviors = loadScore()
-    exit()
   except Exception as e:
     logging.error(f"Failed to load behaviors from loadScore: {repr(e)}")
     os._exit(0)
