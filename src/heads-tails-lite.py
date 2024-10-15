@@ -209,9 +209,13 @@ if __name__ == "__main__":
     logging.error(f"Failed to start up IO: {repr(e)}")
     os._exit(0)
 
-  eventTimes = [[]] * channels
-  eventStates = [[]] * channels
-  channelStates = [0] * channels
+  eventTimes = []
+  eventStates = []
+  channelStates = []
+  for c in range(channels):
+    eventTimes.append([])
+    eventStates.append([])
+    channelStates.append(0)
 
   try:
     behaviors = loadScore()
