@@ -48,6 +48,7 @@ def updateEvents():
   eventList = makeEventList()
   for c in range(channels):
     times, states = generateTimings(behaviors[eventList[c]])
+    logging.debug(f"eventTimes[{c}]: {eventTimes[c]}\neventStates[{c}]: {eventStates[c]}")
     eventTimes[c] += times
     eventStates[c] += states
   logging.debug(f"updateEvents():\neventTimes: {repr(len(eventTimes))}\neventStates: {repr(len(eventStates))}")
