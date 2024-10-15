@@ -50,7 +50,7 @@ def updateEvents():
     times, states = generateTimings(behaviors[eventList[c]])
     eventTimes[c] += times
     eventStates[c] += states
-  logging.debug(f"updateEvents():\neventTimes: {repr(eventTimes)}\neventStates: {repr(eventStates)}")
+  logging.debug(f"updateEvents():\neventTimes: {repr(len(eventTimes))}\neventStates: {repr(len(eventStates))}")
 
 #------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ def updateChannels():
   global channelStates
   for c in range(channels):
     if eventTimes[c]:
-      if (adjustedTime() > eventTimes[c][0]):
+      if (adjustedTime() >= eventTimes[c][0]):
         channelStates[c] = eventStates[c][0]
         eventStates[c] = eventStates[c][1:] # remove from queue
         eventTimes[c] = eventTimes[c][1:] # remove from queue
@@ -87,7 +87,7 @@ def generateTimings(behavior):
     else:
       states.append(0)
 
-  logging.debug(f"generateTimings():\nbehavior: {repr(behavior)}\ntimes: {repr(times)}\nstates: {repr(states)}")
+  logging.debug(f"generateTimings():\nbehavior: {repr(behavior)}\ntimes: {repr(len(times))}\nstates: {repr(len(states))}")
 
   return times, states
 
@@ -217,7 +217,6 @@ if __name__ == "__main__":
     os._exit(0)
 
   updateEvents()
-  exit()
 
   try:
     main()
