@@ -229,5 +229,5 @@ if __name__ == "__main__":
     main()
   except Exception as e:
     logging.error(f"While executing main(): {repr(e)}")
-  finally
+  finally:
     os._exit(0)
