@@ -79,7 +79,7 @@ Updated October 14th, 2024. Instructions based on Mac OSX 14.3.1
 1. **Wireless LAN country**: US (or wherever you happen to be)
 1. Check **Set locale settings**
 1. **Time zone**: Match to your timezone
-1. **Keyboard layout**: us (or whatever keybaord layout you're using)
+1. **Keyboard layout**: us (or whatever layout you're using)
 
 #### Services Tab:
 
